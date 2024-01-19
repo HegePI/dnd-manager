@@ -1,0 +1,2 @@
+keycloak:
+  image: bitnami/keycloak:latest

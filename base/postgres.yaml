@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secrets
+data:
+  POSTGRES_DB: ZG5kLWRhdGFiYXNl
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD: cHN3ZA==
+  DATABASE_URL: cG9zdGdyZXM6Ly9wb3N0Z3Jlczpwc3dkQHBvc3RncmVzOjU0MzIvZG5kLWRhdGFiYXNl
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configmap
+data:
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: slow
+  hostPath:
+    path: "/mnt/data"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres-container
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - configMapRef:
+                name: postgres-configmap
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "2"
+          volumeMounts:
+            - name: postgres-database-storage
+              mountPath: /var/lib/pgsql/data
+      volumes:
+        - name: postgres-database-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrations
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              until nc -vz ${POSTGRES_HOST}.${POSTGRES_NAMESPACE} 5432; do
+                echo "Waiting for db"
+                sleep 2
+              done
+          envFrom:
+            - configMapRef:
+                name: postgres-configmap
+          env:
+            - name: POSTGRES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      containers:
+        - name: db-migration-runner
+          image: backend:latest
+          command: ["sh", "-c"]
+          args:
+            - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}.${POSTGRES_NAMESPACE}:${POSTGRES_PORT}/${POSTGRES_DB} npm run migrate up
+          envFrom:
+            - secretRef:
+                name: postgres-secrets
+            - configMapRef:
+                name: postgres-configmap
+          env:
+            - name: POSTGRES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            limits:
+              cpu: "1"
+              memory: "128Mi"
+      restartPolicy: Never

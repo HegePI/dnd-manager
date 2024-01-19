@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-configmap
+data:
+  NEXTAUTH_URL: http://dnd-manager.local/
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: frontend-secret
+data:
+  NEXTAUTH_SECRET: 67YB1IZkKc9S1l7UuXEz6XemS12VgZiATVYLc3qcUPM=
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend-container
+          image: frontend
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: frontend-configmap
+            - secretRef:
+                name: frontend-secret
+
+          resources:
+            limits:
+              cpu: "1"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

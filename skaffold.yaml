@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta8
+kind: Config
+metadata:
+  name: dnd-manager
+build:
+  artifacts:
+    - image: backend
+      context: backend
+      docker:
+        dockerfile: Dockerfile
+    - image: frontend
+      context: frontend
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  kustomize:
+    paths:
+      - dev
+profiles:
+  - name: .
+    manifests:
+      kustomize:
+        paths:
+          - .
+      helm:
+        releases:
+          - name: keycloak
+            chartPath: charts
+            valuesFiles:
+              - keycloak-values.yaml

@@ -1,0 +1,29 @@
+{
+    "folders": [
+        {
+            "name": "Root",
+            "path": "."
+        },
+        {
+            "path": "backend"
+        },
+        {
+            "path": "frontend"
+        },
+    ],
+    "extensions": {
+        "recommendations": [
+            "aaron-bond.better-comments",
+            "bungcip.better-toml",
+            "vadimcn.vscode-lldb",
+            "serayuzgur.crates",
+            "ms-azuretools.vscode-docker",
+            "editorconfig.editorconfig",
+            "usernamehw.errorlens",
+            "github.vscode-pull-request-github",
+            "googlecloudtools.cloudcode",
+            "wix.vscode-import-cost",
+            "ms-kubernetes-tools.vscode-kubernetes-tools"
+        ]
+    }
+}
