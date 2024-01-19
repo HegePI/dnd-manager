@@ -1,14 +1,17 @@
-
 import LoginBtn from '@/components/LoginBtn'
 import styles from './Navbar.module.css'
 
-export default function NavBar() {
+export default function Navbar() {
     return (
-        <div>
+        <div className={styles.navbar}>
             <p>DND manager</p>
-            <ul className={styles.ul}>
-                <li className={styles.li}><a className={styles.a} href="#Home">Home</a></li>
-                <li className={styles.li}><a className={styles.a} href="#Dashboard">Dashboard</a></li>
+            <ul>
+                <li>
+                    <a href="#Home">Home</a>
+                </li>
+                <li>
+                    <a href="#Dashboard">Dashboard</a>
+                </li>
             </ul>
             <div>
                 <LoginBtn />
