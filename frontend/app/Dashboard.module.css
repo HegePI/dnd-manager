@@ -1,0 +1,23 @@
+/* styles.css */
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+}
+
+.dashboard img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Additional styles for text, adjust as needed */
+.dashboard h1,
+.dashboard p {
+    margin: 10px 0;
+}

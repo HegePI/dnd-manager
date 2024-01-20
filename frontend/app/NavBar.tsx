@@ -7,10 +7,10 @@ export default function Navbar() {
             <p>DND manager</p>
             <ul>
                 <li>
-                    <a href="#Home">Home</a>
+                    <a href="/">Home</a>
                 </li>
                 <li>
-                    <a href="#Dashboard">Dashboard</a>
+                    <a href="/dashboard">Dashboard</a>
                 </li>
             </ul>
             <div>
