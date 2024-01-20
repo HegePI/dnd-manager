@@ -10,20 +10,21 @@
         {
             "path": "frontend"
         },
+        {
+            "path": "system-tests"
+        }
     ],
     "extensions": {
         "recommendations": [
             "aaron-bond.better-comments",
-            "bungcip.better-toml",
-            "vadimcn.vscode-lldb",
-            "serayuzgur.crates",
             "ms-azuretools.vscode-docker",
             "editorconfig.editorconfig",
             "usernamehw.errorlens",
             "github.vscode-pull-request-github",
             "googlecloudtools.cloudcode",
             "wix.vscode-import-cost",
-            "ms-kubernetes-tools.vscode-kubernetes-tools"
+            "ms-kubernetes-tools.vscode-kubernetes-tools",
+            "sakamoto66.vscode-playwright-test-runner"
         ]
     }
 }
