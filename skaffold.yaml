@@ -22,9 +22,3 @@ profiles:
       kustomize:
         paths:
           - .
-      helm:
-        releases:
-          - name: keycloak
-            chartPath: charts
-            valuesFiles:
-              - keycloak-values.yaml
