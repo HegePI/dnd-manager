@@ -1,7 +1,25 @@
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
+    async session({ session, user, token }) {
+      if (!session || !token) return session;
+      session.user = { ...session.user, id: token.id };
+      return session;
+    },
+    async jwt({ token, user, account, profile }) {
+      if (!token || !user) return token;
+      token.id = user.id;
+      return token;
+    },
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -10,8 +28,8 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        const user = {
-          id: "1",
+        const user: User = {
+          id: "323067f5-3540-428d-8038-fa3599ab237a",
           name: credentials?.username || "John Doe",
           email: "example@example.com",
         };
