@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "tsc",
     "start": "npm run compile && node ./dist/index.js",
-    "migrate": "node-pg-migrate"
+    "migrate": "node-pg-migrate -j ts"
   },
   "author": "Heikki Pulli",
   "license": "MIT",
