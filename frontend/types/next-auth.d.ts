@@ -14,17 +14,7 @@ declare module "next-auth" {
   /** The OAuth profile returned from your provider */
   interface Profile {}
 
-  interface Session {
-    user: {
-      id: string;
-    } & DefaultSession["user"];
-  }
+  interface Session {}
 
   interface Token {}
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-  }
 }

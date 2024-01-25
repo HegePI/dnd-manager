@@ -1,16 +1,17 @@
-import { ColumnDefinitions, MigrationBuilder } from "node-pg-migrate";
+/* eslint-disable @typescript-eslint/naming-convention */
+import { MigrationBuilder, ColumnDefinitions } from "node-pg-migrate";
 
 export const shorthands: ColumnDefinitions | undefined = undefined;
 
-export const up = async (pgm: MigrationBuilder): Promise<void> => {
-  pgm.createTable("users", {
+export async function up(pgm: MigrationBuilder): Promise<void> {
+  pgm.createTable("characters", {
     id: {
       type: "uuid",
       primaryKey: true,
       default: pgm.func("uuid_generate_v4()"),
     },
+    user_id: { type: "uuid", notNull: true },
     name: { type: "text", notNull: true },
-    username: { type: "text", notNull: true },
     created_at: {
       type: "timestamp",
       notNull: true,
@@ -24,15 +25,15 @@ export const up = async (pgm: MigrationBuilder): Promise<void> => {
     deleted_at: { type: "timestamp" },
   });
 
-  pgm.createTrigger("users", "set_timestamp_trigger", {
+  pgm.createTrigger("characters", "set_timestamp_trigger", {
     when: "BEFORE",
     operation: "UPDATE",
     level: "ROW",
     function: "set_timestamp",
   });
-};
+}
 
-export const down = async (pgm: MigrationBuilder): Promise<void> => {
-  pgm.dropTrigger("users", "set_timestamp_trigger");
-  pgm.dropTable("users");
-};
+export async function down(pgm: MigrationBuilder): Promise<void> {
+  pgm.dropTrigger("characters", "set_timestamp_trigger");
+  pgm.dropTable("characters");
+}

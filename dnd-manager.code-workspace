@@ -24,7 +24,9 @@
             "googlecloudtools.cloudcode",
             "wix.vscode-import-cost",
             "ms-kubernetes-tools.vscode-kubernetes-tools",
-            "sakamoto66.vscode-playwright-test-runner"
+            "sakamoto66.vscode-playwright-test-runner",
+            "andrewbutson.vscode-openai",
+            "mquandalle.graphql"
         ]
     }
 }
