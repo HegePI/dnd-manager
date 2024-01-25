@@ -37,4 +37,4 @@ RUN mv /app/dist/migrations/ /app/
 EXPOSE 3000
 
 # Command to run your application
-CMD ["node", "/app/dist/index.js"]
+CMD ["node", "/app/dist/src/index.js"]

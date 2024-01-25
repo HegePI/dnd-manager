@@ -14,13 +14,13 @@ spec:
                 name: frontend
                 port:
                   number: 3000
-    - host: dnd-data-manager.local
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 4000
+    # - host: dnd-data-manager.local
+    #   http:
+    #     paths:
+    #       - path: /api
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: backend
+    #             port:
+    #               number: 4000

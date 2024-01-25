@@ -1,5 +1,5 @@
 resources:
-  - backend.yaml
-  - frontend.yaml
-  - postgres.yaml
+  - frontend
+  - postgres
   - ingress.yaml
+  - backend.yaml

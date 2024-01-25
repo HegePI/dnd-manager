@@ -19,7 +19,7 @@ spec:
             - containerPort: 4000
           envFrom:
             - secretRef:
-                name: postgres-secrets
+                name: postgres-secret
             - configMapRef:
                 name: postgres-configmap
           env:

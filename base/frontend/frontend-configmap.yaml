@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-configmap
+data:
+  NEXTAUTH_URL: http://dnd-manager.local/
+  NEXT_SHARP_PATH: /tmp/node_modules/sharp
