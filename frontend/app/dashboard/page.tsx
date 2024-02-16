@@ -1,14 +1,12 @@
-"use client"
-
 import twerkingCrewmate from "@/public/twerking-crewmate.gif"
 import { gql } from "@apollo/client"
 import { useQuery } from "@apollo/experimental-nextjs-app-support/ssr"
 import Image from "next/image"
 import styles from "../Dashboard.module.css"
+import CreateCharacter from "./createCharacter"
 
-import { CreateCharacter } from "@/app/dashboard/createCharacter"
 
-export default function Page() {
+const Page = async () => {
     const GET_CHARACTERS = gql`
     query GetCharacters {
         characters {
@@ -29,4 +27,6 @@ export default function Page() {
         </div>
     )
 }
+
+export default Page
 

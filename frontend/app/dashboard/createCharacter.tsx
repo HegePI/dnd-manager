@@ -1,5 +1,3 @@
-"use server"
-
 import { auth } from "@/auth/auth";
 import { gql, useMutation } from "@apollo/client";
 
@@ -13,7 +11,7 @@ mutation CreateCharacter($name: String) {
 }
 `
 
-export const CreateCharacter = async () => {
+const CreateCharacter = async () => {
     const createCharacter = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const name = e.currentTarget.characterName.value
@@ -21,6 +19,7 @@ export const CreateCharacter = async () => {
     }
 
     const session = await auth()
+    console.log("session: ", session)
     const [mutateCreateCharacter, { loading, error }] = useMutation(CREATE_CHARACTER)
 
     if (!session?.user?.id) return <p>user_id not found</p>
@@ -38,3 +37,5 @@ export const CreateCharacter = async () => {
         </div>
     );
 }
+
+export default CreateCharacter

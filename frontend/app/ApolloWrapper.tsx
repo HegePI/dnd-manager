@@ -10,7 +10,7 @@ import {
 
 function makeClient() {
     const httpLink = new HttpLink({
-        uri: "/api/graphql",
+        uri: "dnd-manager.local/api/graphql",
         fetchOptions: { cache: "no-store" },
     });
 
