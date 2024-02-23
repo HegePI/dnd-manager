@@ -8,8 +8,8 @@ build:
       context: backend
       docker:
         dockerfile: Dockerfile
-    - image: frontend
-      context: frontend
+    - image: svelte-frontend
+      context: svelte-frontend
       docker:
         dockerfile: Dockerfile
 manifests:

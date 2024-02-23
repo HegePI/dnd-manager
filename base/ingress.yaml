@@ -11,7 +11,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: svelte-frontend
                 port:
                   number: 3000
           - path: /api/graphql

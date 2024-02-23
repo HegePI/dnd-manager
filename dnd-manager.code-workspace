@@ -8,10 +8,11 @@
             "path": "backend"
         },
         {
-            "path": "frontend"
+            "path": "system-tests"
         },
         {
-            "path": "system-tests"
+            "name": "svelte-frontend",
+            "path": "svelte-frontend"
         }
     ],
     "extensions": {
@@ -26,7 +27,8 @@
             "ms-kubernetes-tools.vscode-kubernetes-tools",
             "sakamoto66.vscode-playwright-test-runner",
             "andrewbutson.vscode-openai",
-            "mquandalle.graphql"
+            "mquandalle.graphql",
+            "svelte.svelte-vscode"
         ]
     }
 }
