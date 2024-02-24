@@ -1,37 +1,36 @@
 export const typeDefs = `
-type User {
+type Character {
     id: ID!
+    user_id: ID!
     name: String!
-    username: String!
     created_at: String!
     updated_at: String!
     deleted_at: String
   }
   
-  input CreateUserInput {
+  input CreateCharacterInput {
+    user_id: ID!
     name: String!
-    username: String!
   }
   
-  input UpdateUserInput {
+  input UpdateCharacterInput {
     id: ID!
     name: String
-    username: String
   }
 
-  input DeleteUserInput {
+  input DeleteCharacterInput {
     id: ID!
   }
   
   type Query {
-    user(id: ID!): User
-    users: [User]
-    userCount: Int!
+    character(id: ID!): Character
+    characters: [Character]
+    characterCount: Int!
   }
   
   type Mutation {
-    createUser(input: CreateUserInput!): User
-    updateUser(id: ID!, input: UpdateUserInput!): User
-    deleteUser(id: ID!): User
+    createCharacter(input: CreateCharacterInput!): Character
+    updateCharacter(id: ID!, input: UpdateCharacterInput!): Character
+    deleteCharacter(id: ID!): Character
   }  
 `;
