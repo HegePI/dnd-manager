@@ -3,22 +3,36 @@ kind: Config
 metadata:
   name: dnd-manager
 build:
+  local:
+    concurrency: 0
+    tryImportMissing: false
+    useDockerCLI: false
   artifacts:
     - image: backend
       context: backend
       docker:
         dockerfile: Dockerfile
-    - image: svelte-frontend
-      context: svelte-frontend
+    - image: frontend
+      context: frontend
       docker:
         dockerfile: Dockerfile
 manifests:
   kustomize:
     paths:
       - dev
-profiles:
-  - name: .
-    manifests:
-      kustomize:
-        paths:
-          - .
+  helm:
+    releases:
+      - name: postgres
+        valuesFiles:
+          - charts/postgres/values.dev.yaml
+          - charts/postgres/values.prod.yaml
+        remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
+deploy:
+  helm:
+    releases:
+      - name: postgres
+        valuesFiles:
+          - charts/postgres/values.dev.yaml
+          - charts/postgres/values.prod.yaml
+        remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
+  kubectl: {}
