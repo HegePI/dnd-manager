@@ -1,0 +1,23 @@
+primary:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+readReplicas:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+backup:
+  cronjob:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+volumePermissions:
+  resources:
+    cpu: 500m
+    memory: 512Mi

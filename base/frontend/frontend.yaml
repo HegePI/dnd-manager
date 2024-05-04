@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: svelte-frontend-deployment
+  name: frontend-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: svelte-frontend
+      app: frontend
   template:
     metadata:
       labels:
-        app: svelte-frontend
+        app: frontend
     spec:
       containers:
-        - name: svelte-frontend-container
-          image: svelte-frontend
+        - name: frontend-container
+          image: frontend
           ports:
             - containerPort: 3000
           resources:
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: svelte-frontend
+  name: frontend
 spec:
   selector:
-    app: svelte-frontend
+    app: frontend
   ports:
     - protocol: TCP
       port: 3000

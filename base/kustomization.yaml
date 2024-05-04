@@ -1,5 +1,4 @@
 resources:
-  - svelte-frontend
-  - postgres
+  - frontend
+  - backend
   - ingress.yaml
-  - backend.yaml

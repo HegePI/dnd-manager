@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrations
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              until nc -vz ${POSTGRES_HOST}.${POSTGRES_NAMESPACE} 5432; do
+                echo "Waiting for db"
+                sleep 2
+              done
+          envFrom:
+            - configMapRef:
+                name: postgres-configmap
+          env:
+            - name: POSTGRES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      containers:
+        - name: db-migration-runner
+          image: backend:latest
+          command: ["sh", "-c"]
+          args:
+            - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}.${POSTGRES_NAMESPACE}:${POSTGRES_PORT}/${POSTGRES_DB} npm run migrate up
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+            - configMapRef:
+                name: postgres-configmap
+          env:
+            - name: POSTGRES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources:
+            limits:
+              cpu: "1"
+              memory: "128Mi"
+      restartPolicy: Never
