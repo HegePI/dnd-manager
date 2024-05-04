@@ -1,4 +1,0 @@
-resources:
-  - frontend.yaml
-  - frontend-configmap.yaml
-  - frontend-secret.yaml

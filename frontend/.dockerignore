@@ -1,1 +1,8 @@
-.next
+.svelte-kit
+build
+node_modules
+.eslint*
+.git*
+.npmrc
+.prettier*
+README.md
