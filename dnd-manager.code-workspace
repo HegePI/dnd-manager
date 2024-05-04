@@ -11,8 +11,8 @@
             "path": "system-tests"
         },
         {
-            "name": "svelte-frontend",
-            "path": "svelte-frontend"
+            "name": "frontend",
+            "path": "frontend"
         }
     ],
     "extensions": {
