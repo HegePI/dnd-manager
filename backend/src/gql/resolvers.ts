@@ -1,7 +1,7 @@
-import { userQueries, userMutations } from "./resolvers/users";
+import { characterQueries, characterMutations } from "./resolvers/characters";
 
 export const resolvers = {
-  Query: { ...userQueries },
+  Query: { ...characterQueries },
 
-  Mutation: { ...userMutations },
+  Mutation: { ...characterMutations },
 };

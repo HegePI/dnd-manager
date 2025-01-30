@@ -19,20 +19,20 @@ build:
 manifests:
   kustomize:
     paths:
-      - dev
-  helm:
-    releases:
-      - name: postgres
-        valuesFiles:
-          - charts/postgres/values.dev.yaml
-          - charts/postgres/values.prod.yaml
-        remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
+      - k8s/dev
 deploy:
   helm:
     releases:
-      - name: postgres
+      - name: postgresql
+        remoteChart: bitnami/postgresql
         valuesFiles:
-          - charts/postgres/values.dev.yaml
-          - charts/postgres/values.prod.yaml
-        remoteChart: oci://registry-1.docker.io/bitnamicharts/postgresql
+          - k8s/helm/values/postgresql/postgresql.dev.yaml
+      - name: kubeai
+        remoteChart: kubeai/kubeai
+        valuesFiles:
+          - k8s/helm/values/kubeai/kubeai.yaml
+      - name: kubeai-models
+        remoteChart: kubeai/models
+        valuesFiles:
+          - k8s/helm/values/kubeai/models.yaml
   kubectl: {}

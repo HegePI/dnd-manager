@@ -17,18 +17,21 @@ spec:
           image: backend
           ports:
             - containerPort: 4000
-          envFrom:
-            - secretRef:
-                name: postgres-secret
-            - configMapRef:
-                name: postgres-configmap
           env:
+            - name: POSTGRES_HOST
+              value: "postgresql"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: "dnd"
+            - name: POSTGRES_USER
+              value: "dnd"
             - name: PORT
               value: "4000"
           resources:
             limits:
-              memory: "256Mi"
-              cpu: "1"
+              memory: 256Mi
+              cpu: 500m
 
 ---
 apiVersion: v1

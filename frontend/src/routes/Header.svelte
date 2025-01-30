@@ -6,6 +6,7 @@
 		<ul>
 			<li><a href="/">Home</a></li>
 			<li><a href="/dashboard">Dashboard</a></li>
+			<li><a href="/dashboard/character_sheet_creator">Character sheet creator</a></li>
 		</ul>
 		<button class="login-button">Login</button>
 	</nav>

@@ -21,6 +21,7 @@ const {
   POSTGRES_DB,
   POSTGRES_USER,
   POSTGRES_PASSWORD,
+  PORT,
 } = process.env;
 
 export const pool = new Pool({
@@ -81,7 +82,7 @@ const start = async () => {
     })
   );
 
-  httpServer.listen(process.env.PORT, () =>
+  httpServer.listen(PORT, () =>
     console.log(`Server is now running on http://localhost:${process.env.PORT}`)
   );
 };

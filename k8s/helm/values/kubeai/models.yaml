@@ -1,0 +1,4 @@
+catalog:
+  gemma2-2b-cpu:
+    enabled: true
+    minReplicas: 1

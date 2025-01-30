@@ -1,40 +1,29 @@
-# Use the official Node.js image as the base image
-FROM node:20 as builder
+FROM node:20 AS base
+WORKDIR /usr/src/app
 
-# Set the working directory inside the container
-WORKDIR /app
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json /temp/dev
+RUN cd /temp/dev && npm install
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+RUN mkdir -p /temp/prod
+COPY package.json /temp/prod
+RUN cd /temp/prod && npm install --omit=dev
 
-# Install project dependencies
-RUN npm install
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
+COPY . . 
 
-# Copy the rest
-COPY . .
-
-# Build
+ENV NODE_ENV=production
 RUN npm run compile
 
-# Define runner
-FROM node:20 as runner
-
-# Working directory
+FROM base AS release
 WORKDIR /app
+COPY --from=prerelease /usr/src/app/dist/src .
+COPY --from=prerelease /usr/src/app/dist/migrations migrations
+COPY --from=install /temp/prod/node_modules node_modules
+COPY package.json package.json
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
-
-RUN npm install --omit=dev
-
-# Copy build from builder
-COPY --from=builder /app/dist /app/dist
-
-# Move migrations up so that migration runner finds them
-RUN mv /app/dist/migrations/ /app/
-
-# Expose the port your app will run on
-EXPOSE 3000
-
-# Command to run your application
-CMD ["node", "/app/dist/src/index.js"]
+USER node
+EXPOSE 4000
+ENTRYPOINT [ "node", "index.js" ]
