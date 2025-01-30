@@ -44,5 +44,3 @@ Append following line to the hosts file of your system, in linux **/etc/hosts**,
 `skaffold dev`
 
 when all services started go to [dnd-manager.local](http://dnd-manager.local)
-
-testing
