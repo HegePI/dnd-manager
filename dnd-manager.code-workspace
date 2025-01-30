@@ -5,9 +5,11 @@
             "path": "."
         },
         {
+            "name": "backend",
             "path": "backend"
         },
         {
+            "name": "system-tests",
             "path": "system-tests"
         },
         {
@@ -28,7 +30,82 @@
             "sakamoto66.vscode-playwright-test-runner",
             "andrewbutson.vscode-openai",
             "mquandalle.graphql",
-            "svelte.svelte-vscode"
+            "svelte.svelte-vscode",
+            "GitHub.copilot"
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "Start Minikube",
+                "type": "shell",
+                "command": "minikube start --addons ingress",
+                "problemMatcher": []
+            },
+            {
+                "label": "Start System with Skaffold",
+                "type": "shell",
+                "command": "skaffold run",
+                "problemMatcher": [],
+                "dependsOn": "Start Minikube"
+            },
+            {
+                "label": "Wait for System to be Ready",
+                "type": "shell",
+                "command": "sleep 120", // Adjust the sleep duration as needed
+                "problemMatcher": [],
+                "dependsOn": "Start System with Skaffold"
+            },
+            {
+                "label": "Run System Tests",
+                "type": "shell",
+                "command": "npx playwright test",
+                "options": {
+                    "cwd": "${workspaceFolder:system-tests}"
+                },
+                "dependsOn": "Wait for System to be Ready",
+                "problemMatcher": []
+            },
+            {
+                "label": "Update Dependencies in All Folders",
+                "type": "shell",
+                "command": "npm update",
+                "options": {
+                    "cwd": "${workspaceFolder:Root}"
+                },
+                "problemMatcher": [],
+                "dependsOrder": "sequence",
+                "dependsOn": [
+                    {
+                        "label": "Update Dependencies in Backend",
+                        "type": "shell",
+                        "command": "npm update",
+                        "options": {
+                            "cwd": "${workspaceFolder:backend}"
+                        },
+                        "problemMatcher": []
+                    },
+                    {
+                        "label": "Update Dependencies in System Tests",
+                        "type": "shell",
+                        "command": "npm update",
+                        "options": {
+                            "cwd": "${workspaceFolder:system-tests}"
+                        },
+                        "problemMatcher": []
+                    },
+                    {
+                        "label": "Update Dependencies in Frontend",
+                        "type": "shell",
+                        "command": "npm update",
+                        "options": {
+                            "cwd": "${workspaceFolder:frontend}"
+                        },
+                        "problemMatcher": []
+                    }
+                ]
+            }
         ]
     }
 }
