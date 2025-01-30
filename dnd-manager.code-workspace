@@ -51,6 +51,13 @@
                 "dependsOn": "Start Minikube"
             },
             {
+                "label": "Start skaffold dev",
+                "type": "shell",
+                "command": "skaffold dev",
+                "problemMatcher": [],
+                "dependsOn": "Start Minikube"
+            },
+            {
                 "label": "Wait for System to be Ready",
                 "type": "shell",
                 "command": "sleep 120", // Adjust the sleep duration as needed
