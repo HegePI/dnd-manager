@@ -19,7 +19,7 @@ build:
 manifests:
   kustomize:
     paths:
-      - k8s/dev
+      - k8s/base
 deploy:
   helm:
     releases:
