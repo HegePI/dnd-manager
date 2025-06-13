@@ -1,7 +1,16 @@
 node_modules
-compose.yaml
-build
-dist
+npm-debug.log
+Dockerfile
+.docker*
 .dockerignore
+.git
+.gitignore
 .env
-.example.env
+.env.*
+!/.env.example
+# dist is built inside the container, so ignore local dist
+dist 
+# Ignore npm and yarn lockfiles
+package-lock.json
+yarn.lock
+

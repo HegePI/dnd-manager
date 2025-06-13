@@ -4,3 +4,15 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 playwright/.auth
+
+# Bun
+bun.lockb
+
+# Yarn PnP files (if switching from Yarn PnP and they were not committed)
+.pnp.*
+.yarn/*
+!/.yarn/patches
+!/.yarn/plugins
+!/.yarn/releases
+!/.yarn/sdks
+!/.yarn/versions

@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "bun test"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.41.1",
-    "@types/node": "^20.11.5"
+    "@playwright/test": "^1.53.0",
+    "@types/node": "^24.0.1",
+    "@types/bun": "latest"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5.8.3"
   }
 }

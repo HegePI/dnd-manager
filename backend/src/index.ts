@@ -6,12 +6,12 @@ import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHt
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import cors from "cors";
 import dotenv from "dotenv";
-import { useServer } from "graphql-ws/lib/use/ws";
+import { useServer } from "graphql-ws/use/ws";
 import http from "http";
 import { Pool } from "pg";
 import { WebSocketServer } from "ws";
-import { resolvers } from "./gql/resolvers";
-import { typeDefs } from "./gql/schema";
+import { resolvers } from "./gql/resolvers.js";
+import { typeDefs } from "./gql/schema.js";
 
 dotenv.config();
 
