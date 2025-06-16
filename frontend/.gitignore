@@ -13,3 +13,5 @@ vite.config.ts.timestamp-*
 bun.lockb
 
 *storybook.log
+
+storybook-static
