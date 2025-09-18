@@ -30,7 +30,8 @@
             "sakamoto66.vscode-playwright-test-runner",
             "mquandalle.graphql",
             "svelte.svelte-vscode",
-            "GitHub.copilot"
+            "GitHub.copilot",
+            "github.vscode-github-actions"
         ]
     },
     "tasks": {
