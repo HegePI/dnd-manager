@@ -1,17 +1,31 @@
 <script>
-	import './styles.css';
-	import Header from './Header.svelte';
+	import Header from '../stories/Header.svelte';
+	import Footer from '../stories/Footer.svelte';
+	/**
+	 * @typedef {Object} Props
+	 * @property {import('svelte').Snippet} [children]
+	 */
+
+	/** @type {Props} */
+	let { children } = $props();
+
+	const onLogin = () => {
+		alert('Login clicked');
+	};
+	const onLogout = () => {
+		alert('Logout clicked');
+	};
+	const onCreateAccount = () => {
+		alert('Create Account clicked');
+	};
 </script>
 
 <div class="app">
-	<Header />
+	<Header {onLogin} {onLogout} {onCreateAccount} />
 	<main>
-		<slot />
+		{@render children?.()}
 	</main>
-
-	<footer>
-		<p>More info soon</p>
-	</footer>
+	<Footer />
 </div>
 
 <style>
@@ -30,13 +44,5 @@
 		max-width: 64rem;
 		margin: 0 auto;
 		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
 	}
 </style>

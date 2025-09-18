@@ -12,9 +12,9 @@
 		fields: Field[];
 	}
 
-	let characterSheet: Section[] = [];
-	let newSectionName = '';
-	let selectedFieldType: 'text' | 'number' | 'checkbox' = 'text';
+	let characterSheet: Section[] = $state([]);
+	let newSectionName = $state('');
+	let selectedFieldType: 'text' | 'number' | 'checkbox' = $state('text');
 
 	const fieldTypes: Array<'text' | 'number' | 'checkbox'> = ['text', 'number', 'checkbox'];
 
@@ -73,14 +73,14 @@
 
 	<div>
 		<input type="text" placeholder="Section Name" bind:value={newSectionName} />
-		<button on:click={addSection}>Add Section</button>
+		<button onclick={addSection}>Add Section</button>
 	</div>
 
 	{#each characterSheet as section, sectionIndex}
 		<div class="section">
 			<h2>
 				{section.name}
-				<button on:click={() => removeSection(sectionIndex)}>Delete</button>
+				<button onclick={() => removeSection(sectionIndex)}>Delete</button>
 			</h2>
 
 			<div>
@@ -90,7 +90,7 @@
 						<option value={type}>{type}</option>
 					{/each}
 				</select>
-				<button on:click={() => addField(sectionIndex)}>Add Field</button>
+				<button onclick={() => addField(sectionIndex)}>Add Field</button>
 			</div>
 
 			{#each section.fields as field, fieldIndex}
@@ -103,14 +103,14 @@
 							type="text"
 							bind:value={field.value}
 							placeholder="Enter text"
-							on:input={() => saveSheet()}
+							oninput={() => saveSheet()}
 						/>
 					{:else if field.type === 'number'}
 						<input
 							id={'field-' + sectionIndex + '-' + fieldIndex}
 							type="number"
 							bind:value={field.value}
-							on:input={() => {
+							oninput={() => {
 								field.value = Number(field.value);
 								saveSheet();
 							}}
@@ -120,13 +120,13 @@
 							id={'field-' + sectionIndex + '-' + fieldIndex}
 							type="checkbox"
 							checked={!!field.value}
-							on:change={() => {
+							onchange={() => {
 								field.value = !field.value;
 								saveSheet();
 							}}
 						/>
 					{/if}
-					<button on:click={() => removeField(sectionIndex, fieldIndex)}>Remove</button>
+					<button onclick={() => removeField(sectionIndex, fieldIndex)}>Remove</button>
 				</div>
 			{/each}
 		</div>
