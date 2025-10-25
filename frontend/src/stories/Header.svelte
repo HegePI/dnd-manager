@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './header.css';
 	import Button from './Button.svelte';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		user?: { name: string };
@@ -15,9 +16,9 @@
 <header>
 	<div class="storybook-header">
 		<nav>
-			<a href="/">Home</a>
-			<a href="/dashboard">Dashboard</a>
-			<a href="/dashboard/character_sheet_creator">Character sheet creator</a>
+			<a href={resolve('/')}>Home</a>
+			<a href={resolve('/dashboard')}>Dashboard</a>
+			<a href={resolve('/dashboard/character_sheet_creator')}>Character sheet creator</a>
 		</nav>
 		<div>
 			{#if user}

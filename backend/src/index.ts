@@ -72,18 +72,20 @@ const start = async () => {
     cors(),
     express.json(),
     expressMiddleware(server, {
-      context: async ({ req }: any) => {
+      context: async ({ req }) => {
         const context: Context = {
           req,
           pool: pool,
         };
         return context;
       },
-    })
+    }),
   );
 
   httpServer.listen(PORT, () =>
-    console.log(`Server is now running on http://localhost:${process.env.PORT}`)
+    console.log(
+      `Server is now running on http://localhost:${process.env.PORT}`,
+    ),
   );
 };
 

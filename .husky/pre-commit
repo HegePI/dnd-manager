@@ -1,0 +1,4 @@
+cd frontend/ && npm run format && npm run lint && cd ..
+cd backend/ && npm run format && npm run lint && cd ..
+cd system-tests/ && npm run format && npm run lint && cd ..
+git add .
