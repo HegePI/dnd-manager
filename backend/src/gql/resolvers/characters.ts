@@ -29,10 +29,10 @@ export const characterQueries = {
   character: async (_root: unknown, args: CharacterArgs, { pool }: Context) => {
     const { id } = args;
     const res = await pool.query({
-      text: `SELECT * FROM characters WHERE id=$1 WHERE deleted_at IS NULL;`,
+      text: `SELECT * FROM characters WHERE id=$1 AND deleted_at IS NULL;`,
       values: [id],
     });
-    return res.rows[0] ?? null;
+    return res.rows[0];
   },
   characters: async (_root: unknown, _args: unknown, { pool }: Context) => {
     const res = await pool.query({
