@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-import { MigrationBuilder, ColumnDefinitions } from "node-pg-migrate";
+import { ColumnDefinitions, MigrationBuilder } from "node-pg-migrate";
 
 export const shorthands: ColumnDefinitions | undefined = undefined;
 

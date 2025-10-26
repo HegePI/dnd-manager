@@ -1,15 +1,15 @@
 .storybook-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 15px 20px;
-    font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    gap: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 15px 20px;
+	font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	gap: 20px;
 }
 
 .storybook-footer p {
-    margin: 10px 0;
-    color: #666;
-    font-size: 12px;
+	margin: 10px 0;
+	color: #666;
+	font-size: 12px;
 }

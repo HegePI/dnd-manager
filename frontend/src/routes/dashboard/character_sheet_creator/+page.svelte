@@ -28,7 +28,7 @@
 
 	function addField(sectionIndex: number) {
 		const name = prompt('Enter field name:');
-		if (name) {
+		if (name && sectionIndex >= 0 && sectionIndex < characterSheet.length) {
 			let initialValue;
 			if (selectedFieldType === 'checkbox') {
 				initialValue = false;
@@ -38,8 +38,15 @@
 				initialValue = '';
 			}
 			const newField = { name, type: selectedFieldType, value: initialValue };
-			characterSheet[sectionIndex].fields = [...characterSheet[sectionIndex].fields, newField];
-			characterSheet = [...characterSheet];
+			characterSheet = characterSheet.map((section, i) => {
+				if (i === sectionIndex) {
+					return {
+						...section,
+						fields: [...section.fields, newField]
+					};
+				}
+				return section;
+			});
 			saveSheet();
 		}
 	}
@@ -51,9 +58,19 @@
 	}
 
 	function removeField(sectionIndex: number, fieldIndex: number) {
-		characterSheet[sectionIndex].fields.splice(fieldIndex, 1);
-		characterSheet = [...characterSheet];
-		saveSheet();
+		const section = characterSheet.at(sectionIndex);
+		if (section && fieldIndex >= 0 && fieldIndex < section.fields.length) {
+			characterSheet = characterSheet.map((sec, i) => {
+				if (i === sectionIndex) {
+					return {
+						...sec,
+						fields: sec.fields.filter((_, j) => j !== fieldIndex)
+					};
+				}
+				return sec;
+			});
+			saveSheet();
+		}
 	}
 
 	function saveSheet() {
@@ -76,7 +93,7 @@
 		<button onclick={addSection}>Add Section</button>
 	</div>
 
-	{#each characterSheet as section, sectionIndex}
+	{#each characterSheet as section, sectionIndex (section.name)}
 		<div class="section">
 			<h2>
 				{section.name}
@@ -86,14 +103,14 @@
 			<div>
 				<label for="field-type-select-{sectionIndex}">Field Type:</label>
 				<select id="field-type-select-{sectionIndex}" bind:value={selectedFieldType}>
-					{#each fieldTypes as type}
+					{#each fieldTypes as type (type)}
 						<option value={type}>{type}</option>
 					{/each}
 				</select>
 				<button onclick={() => addField(sectionIndex)}>Add Field</button>
 			</div>
 
-			{#each section.fields as field, fieldIndex}
+			{#each section.fields as field, fieldIndex (field.name)}
 				<div class="field">
 					<label for={'field-' + sectionIndex + '-' + fieldIndex}>{field.name} ({field.type})</label
 					>
