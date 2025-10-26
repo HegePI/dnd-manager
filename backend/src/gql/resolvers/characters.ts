@@ -15,6 +15,7 @@ interface UpdateCharacterArgs {
   input: {
     id: string;
     name: string;
+    user_id: string;
   };
 }
 
@@ -28,13 +29,15 @@ export const characterQueries = {
   character: async (_root: unknown, args: CharacterArgs, { pool }: Context) => {
     const { id } = args;
     const res = await pool.query({
-      text: `SELECT * FROM characters WHERE id=$1;`,
+      text: `SELECT * FROM characters WHERE id=$1 WHERE deleted_at IS NULL;`,
       values: [id],
     });
-    return res.rows[0];
+    return res.rows[0] ?? null;
   },
   characters: async (_root: unknown, _args: unknown, { pool }: Context) => {
-    const res = await pool.query({ text: "SELECT * from characters;" });
+    const res = await pool.query({
+      text: "SELECT * from characters WHERE deleted_at IS NULL ORDER BY name ASC;",
+    });
     return res.rows;
   },
   characterCount: async (_root: unknown, _args: unknown, { pool }: Context) => {
@@ -63,10 +66,10 @@ export const characterMutations = {
     args: UpdateCharacterArgs,
     { pool }: Context,
   ) => {
-    const { id, name } = args.input;
+    const { id, name, user_id } = args.input;
     const res = await pool.query({
-      text: `UPDATE characters SET name=$1 WHERE id=$2 RETURNING *;`,
-      values: [name, id],
+      text: `UPDATE characters SET name=$1 WHERE id=$2 AND user_id=$3 AND deleted_at IS NULL RETURNING *;`,
+      values: [name, id, user_id],
     });
     return res.rows[0];
   },
