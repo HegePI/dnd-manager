@@ -12,13 +12,11 @@ import storybook from 'eslint-plugin-storybook';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
-export default defineConfig(
+export default defineConfig([
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
 	...ts.configs.recommended,
-	...svelte.configs.recommended,
-	prettier,
-	...svelte.configs.prettier,
+	...svelte.configs['flat/recommended'],
 	security.configs.recommended,
 	...storybook.configs['flat/recommended'],
 	{
@@ -41,5 +39,7 @@ export default defineConfig(
 				svelteConfig
 			}
 		}
-	}
-);
+	},
+	...svelte.configs['flat/prettier'],
+	prettier
+]);

@@ -38,8 +38,10 @@ export const characterQueries = {
     return res.rows;
   },
   characterCount: async (_root: unknown, _args: unknown, { pool }: Context) => {
-    const res = await pool.query("SELECT COUNT(*) FROM characters;");
-    return res.rows[0].count;
+    const res = await pool.query(
+      "SELECT COUNT(*) FROM characters WHERE deleted_at IS NULL;",
+    );
+    return Number(res.rows[0].count);
   },
 };
 

@@ -81,11 +81,9 @@ const start = async () => {
       },
     }),
   );
-
-  httpServer.listen(PORT, () =>
-    console.log(
-      `Server is now running on http://localhost:${process.env.PORT}`,
-    ),
+  const port = Number(PORT) || 4000;
+  httpServer.listen(port, () =>
+    console.log(`Server is now running on http://localhost:${port}`),
   );
 };
 
