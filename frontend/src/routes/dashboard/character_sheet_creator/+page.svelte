@@ -38,12 +38,15 @@
 				initialValue = '';
 			}
 			const newField = { name, type: selectedFieldType, value: initialValue };
-			const updatedSheet = [...characterSheet];
-			updatedSheet[sectionIndex] = {
-				...updatedSheet[sectionIndex],
-				fields: [...updatedSheet[sectionIndex].fields, newField]
-			};
-			characterSheet = updatedSheet;
+			characterSheet = characterSheet.map((section, i) => {
+				if (i === sectionIndex) {
+					return {
+						...section,
+						fields: [...section.fields, newField]
+					};
+				}
+				return section;
+			});
 			saveSheet();
 		}
 	}
@@ -55,18 +58,17 @@
 	}
 
 	function removeField(sectionIndex: number, fieldIndex: number) {
-		if (
-			sectionIndex >= 0 &&
-			sectionIndex < characterSheet.length &&
-			fieldIndex >= 0 &&
-			fieldIndex < characterSheet[sectionIndex].fields.length
-		) {
-			const updatedSheet = [...characterSheet];
-			updatedSheet[sectionIndex] = {
-				...updatedSheet[sectionIndex],
-				fields: updatedSheet[sectionIndex].fields.filter((_, index) => index !== fieldIndex)
-			};
-			characterSheet = updatedSheet;
+		const section = characterSheet.at(sectionIndex);
+		if (section && fieldIndex >= 0 && fieldIndex < section.fields.length) {
+			characterSheet = characterSheet.map((sec, i) => {
+				if (i === sectionIndex) {
+					return {
+						...sec,
+						fields: sec.fields.filter((_, j) => j !== fieldIndex)
+					};
+				}
+				return sec;
+			});
 			saveSheet();
 		}
 	}
