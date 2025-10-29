@@ -1,9 +1,10 @@
-apiVersion: skaffold/v4beta10
+apiVersion: skaffold/v4beta13
 kind: Config
 metadata:
   name: dnd-manager
 build:
   local:
+    push: true
     concurrency: 0
     tryImportMissing: false
     useDockerCLI: false
@@ -16,10 +17,6 @@ build:
       context: frontend
       docker:
         dockerfile: Dockerfile
-manifests:
-  kustomize:
-    paths:
-      - k8s/base
 deploy:
   helm:
     releases:
@@ -27,12 +24,11 @@ deploy:
         remoteChart: bitnami/postgresql
         valuesFiles:
           - k8s/helm/values/postgresql/postgresql.dev.yaml
-      - name: kubeai
-        remoteChart: kubeai/kubeai
+      - name: backend
+        chartPath: k8s/helm/charts/backend
         valuesFiles:
-          - k8s/helm/values/kubeai/kubeai.yaml
-      - name: kubeai-models
-        remoteChart: kubeai/models
+          - "k8s/helm/values/backend/values.dev.yaml"
+      - name: frontend
+        chartPath: k8s/helm/charts/frontend
         valuesFiles:
-          - k8s/helm/values/kubeai/models.yaml
-  kubectl: {}
+          - "k8s/helm/values/frontend/values.dev.yaml"

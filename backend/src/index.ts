@@ -67,6 +67,10 @@ const start = async () => {
 
   await server.start();
 
+  app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+  });
+
   app.use(
     "/",
     cors(),
@@ -82,8 +86,8 @@ const start = async () => {
     }),
   );
   const port = Number(PORT) || 4000;
-  httpServer.listen(port, () =>
-    console.log(`Server is now running on http://localhost:${port}`),
+  httpServer.listen(port, "0.0.0.0", () =>
+    console.log(`Server is now running on http://0.0.0.0:${port}`),
   );
 };
 
