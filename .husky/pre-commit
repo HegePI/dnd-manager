@@ -1,3 +1,4 @@
+./scripts/check-app-version.sh
 cd frontend/ && bun run format && bun run lint && cd .. && git add frontend/
 cd backend/ && bun run format && bun run lint && cd .. && git add backend/
 cd system-tests/ && bun run format && bun run lint && cd .. && git add system-tests/

@@ -1,3 +1,0 @@
-resources:
-  - backend.yaml
-  - data-migrations-job.yaml

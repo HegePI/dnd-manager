@@ -1,6 +1,6 @@
 {
   "name": "dnd-manager-backend",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun dist/src/index.js",

@@ -5,16 +5,16 @@
             "path": "."
         },
         {
-            "name": "backend",
             "path": "backend"
         },
         {
-            "name": "system-tests",
             "path": "system-tests"
         },
         {
-            "name": "frontend",
             "path": "frontend"
+        },
+        {
+            "path": "k8s"
         }
     ],
     "extensions": {
