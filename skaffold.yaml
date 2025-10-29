@@ -4,7 +4,6 @@ metadata:
   name: dnd-manager
 build:
   local:
-    push: true
     concurrency: 0
     tryImportMissing: false
     useDockerCLI: false
