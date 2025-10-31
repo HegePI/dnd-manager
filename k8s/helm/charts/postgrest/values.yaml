@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: postgrest/postgrest
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  # Default DB URI assumes the existing Helm release 'postgresql' (bitnami/postgresql)
+  # Override in values for your environment
+  dbUri: "postgres://dnd:password@postgresql:5432/dnd"
+  dbAnonRole: "anon"
+  # Comma-separated list of schemas PostgREST should expose
+  dbSchemas: "public,graphql"
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts: []
+  tls: []
+
+resources: {}

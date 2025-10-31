@@ -1,0 +1,9 @@
+apiVersion: v2
+name: postgrest
+description: Helm chart for PostgREST to serve GraphQL/REST from Postgres
+
+type: application
+
+version: 0.1.0
+
+appVersion: "latest"

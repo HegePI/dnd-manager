@@ -31,3 +31,7 @@ deploy:
         chartPath: k8s/helm/charts/frontend
         valuesFiles:
           - "k8s/helm/values/frontend/values.dev.yaml"
+      - name: postgrest
+        chartPath: k8s/helm/charts/postgrest
+        valuesFiles:
+          - "k8s/helm/values/postgrest/values.dev.yaml"
