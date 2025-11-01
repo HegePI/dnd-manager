@@ -1,0 +1,81 @@
+replicaCount: 1
+
+postgres:
+  image:
+    repository: hegepi/pg-graphql-postgres
+    tag: latest
+    pullPolicy: IfNotPresent
+  postgresUser: dnd
+  postgresPassword: password
+  postgresDatabase: dnd
+  persistence:
+    enabled: false
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+  # Pod security context values (match the UID/GID in your custom image)
+  securityContext:
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+  # When true, create an initContainer to fix permissions on the PVC before postgres starts
+  volumePermissions:
+    enabled: false
+    image:
+      repository: bitnami/os-shell
+      tag: latest
+      pullPolicy: IfNotPresent
+    # Security context used for the init container (default runs as root)
+    containerSecurityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      runAsNonRoot: false
+  initdbScript: |-
+    -- Create an anon role for PostgREST and a wrapper RPC for GraphQL
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon NOINHERIT;
+      END IF;
+    END$$;
+
+    \connect dnd
+
+    CREATE EXTENSION IF NOT EXISTS pg_graphql;
+
+    CREATE OR REPLACE FUNCTION public.graphql_rpc(payload json)
+    RETURNS jsonb
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+    AS $$
+    BEGIN
+      RETURN graphql.resolve(payload->>'query');
+    END;
+    $$;
+
+    GRANT EXECUTE ON FUNCTION public.graphql_rpc(json) TO anon;
+
+postgrest:
+  enabled: true
+  image:
+    repository: postgrest/postgrest
+    tag: latest
+    pullPolicy: IfNotPresent
+  dbAnonRole: anon
+  # PGRST_DB_URI will be templated from postgres service
+  dbSchemas: public,graphql
+
+service:
+  postgres:
+    port: 5432
+    type: ClusterIP
+  postgrest:
+    port: 3000
+    type: ClusterIP
+
+ingress:
+  enabled: false
+  host: postgrest.local
+
+resources: {}

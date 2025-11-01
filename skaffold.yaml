@@ -19,10 +19,10 @@ build:
 deploy:
   helm:
     releases:
-      - name: postgresql
-        remoteChart: bitnami/postgresql
+      - name: postgres-stack
+        chartPath: k8s/helm/charts/postgres-stack
         valuesFiles:
-          - k8s/helm/values/postgresql/postgresql.dev.yaml
+          - k8s/helm/values/postgres-stack/values.dev.yaml
       - name: backend
         chartPath: k8s/helm/charts/backend
         valuesFiles:
@@ -31,7 +31,4 @@ deploy:
         chartPath: k8s/helm/charts/frontend
         valuesFiles:
           - "k8s/helm/values/frontend/values.dev.yaml"
-      - name: postgrest
-        chartPath: k8s/helm/charts/postgrest
-        valuesFiles:
-          - "k8s/helm/values/postgrest/values.dev.yaml"
+      # postgrest is now bundled inside the postgres-stack chart for local dev

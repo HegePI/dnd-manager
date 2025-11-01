@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgres-headless
+  labels:
+    app: {{ include "postgres-stack.fullname" . }}-postgres
+spec:
+  clusterIP: None
+  ports:
+    - port: {{ .Values.service.postgres.port }}
+      targetPort: {{ .Values.service.postgres.port }}
+      name: postgres
+  selector:
+    app: {{ include "postgres-stack.fullname" . }}-postgres

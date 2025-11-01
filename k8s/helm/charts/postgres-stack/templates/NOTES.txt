@@ -1,0 +1,15 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Postgres:
+  - Service: {{ include "postgres-stack.fullname" . }}-postgres
+  - Port: {{ .Values.service.postgres.port }}
+
+PostgREST:
+  - Service: {{ include "postgres-stack.fullname" . }}-postgrest
+  - Port: {{ .Values.service.postgrest.port }}
+
+To port-forward PostgREST locally:
+
+  kubectl port-forward svc/{{ include "postgres-stack.fullname" . }}-postgrest {{ .Values.service.postgrest.port }}:{{ .Values.service.postgrest.port }}
+
+Then open http://localhost:{{ .Values.service.postgrest.port }}

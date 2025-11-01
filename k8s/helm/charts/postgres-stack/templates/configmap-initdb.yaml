@@ -1,0 +1,9 @@
+{{- if .Values.postgres.initdbScript }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-initdb
+data:
+  000-initdb.sql: |
+{{ .Values.postgres.initdbScript | indent 4 }}
+{{- end }}

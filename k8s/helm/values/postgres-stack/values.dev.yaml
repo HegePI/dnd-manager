@@ -1,0 +1,39 @@
+postgres:
+  image:
+    repository: hegepi/pg-graphql-postgres
+    tag: latest
+    pullPolicy: IfNotPresent
+  postgresUser: dnd
+  postgresPassword: password
+  postgresDatabase: dnd
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""
+  volumePermissions:
+    enabled: true
+    image:
+      repository: bitnami/os-shell
+      tag: latest
+      pullPolicy: IfNotPresent
+
+postgrest:
+  enabled: true
+  image:
+    repository: postgrest/postgrest
+    tag: latest
+    pullPolicy: IfNotPresent
+  dbAnonRole: anon
+  dbSchemas: public,graphql
+
+service:
+  postgrest:
+    port: 3000
+
+ingress:
+  enabled: true
+  host: postgrest.local
+
+replicaCount: 1

@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgres
+  labels:
+    app.kubernetes.io/name: {{ include "postgres-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  serviceName: {{ include "postgres-stack.fullname" . }}-postgres-headless
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "postgres-stack.fullname" . }}-postgres
+  template:
+    metadata:
+      labels:
+        app: {{ include "postgres-stack.fullname" . }}-postgres
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.postgres.securityContext.runAsUser | default 1001 }}
+        runAsGroup: {{ .Values.postgres.securityContext.runAsGroup | default 1001 }}
+        fsGroup: {{ .Values.postgres.securityContext.fsGroup | default 1001 }}
+{{- if .Values.postgres.volumePermissions.enabled }}
+      initContainers:
+        - name: volume-permissions
+          image: "{{ .Values.postgres.volumePermissions.image.repository }}:{{ .Values.postgres.volumePermissions.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.volumePermissions.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              chown -R {{ .Values.postgres.securityContext.runAsUser | default 1001 }}:{{ .Values.postgres.securityContext.runAsGroup | default 1001 }} /var/lib/postgresql/data || true
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          securityContext:
+{{ toYaml .Values.postgres.volumePermissions.containerSecurityContext | indent 12 }}
+{{- end }}
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.postgres.port }}
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              value: {{ quote .Values.postgres.postgresUser }}
+            - name: POSTGRES_PASSWORD
+              value: {{ quote .Values.postgres.postgresPassword }}
+            - name: POSTGRES_DB
+              value: {{ quote .Values.postgres.postgresDatabase }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+{{- if .Values.postgres.initdbScript }}
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+{{- end }}
+      volumes:
+{{- if not .Values.postgres.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+{{- end }}
+{{- if .Values.postgres.initdbScript }}
+        - name: initdb
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-initdb
+{{- end }}
+
+  volumeClaimTemplates:
+{{- if .Values.postgres.persistence.enabled }}
+    - metadata:
+        name: data
+        labels:
+          app: {{ include "postgres-stack.fullname" . }}-postgres
+      spec:
+        accessModes:
+{{ toYaml .Values.postgres.persistence.accessModes | indent 10 }}
+        resources:
+          requests:
+            storage: {{ .Values.postgres.persistence.size }}
+{{- if .Values.postgres.persistence.storageClass }}
+        storageClassName: {{ .Values.postgres.persistence.storageClass }}
+{{- end }}
+{{- end }}
