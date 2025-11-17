@@ -1,0 +1,51 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "db-migration.fullname" . }}-job
+  labels:
+    app.kubernetes.io/name: {{ include "db-migration.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ include "db-migration.fullname" . }}-job
+    spec:
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "db-migration.serviceAccountName" . }}
+      {{- end }}
+      restartPolicy: OnFailure
+      containers:
+        - name: db-migration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          command:
+            - sh
+            - -c
+            - |
+              set -ex
+              echo "Starting database migration..."
+              # Wait for Postgres to be ready
+              until pg_isready -h {{ .Values.postgres.host }} -p {{ .Values.postgres.port }} -U {{ .Values.postgres.user }} >/dev/null; do
+                echo "Waiting for Postgres to be ready..."
+                sleep 2
+              done
+              echo "Postgres is ready. Running migrations..."
+
+              bun run migrate:up
+              echo "Database migration completed successfully"
+          securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.user | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgres.password | quote }}
+            - name: POSTGRES_HOST
+              value: {{ .Values.postgres.host | quote }}
+            - name: POSTGRES_PORT
+              value: {{ .Values.postgres.port | quote }}
+            - name: POSTGRES_DATABASE
+              value: {{ .Values.postgres.database | quote }}
+{{- end }}
+

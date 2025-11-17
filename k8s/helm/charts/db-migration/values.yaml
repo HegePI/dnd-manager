@@ -1,4 +1,4 @@
-# Default values for backend.
+# Default values for db-migration.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: hegepi/backend
+  repository: ""
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -54,7 +54,7 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 4000
+  port: 80
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -94,7 +94,7 @@ httpRoute:
   - matches:
     - path:
         type: PathPrefix
-        value: /api
+        value: /headers
   #   filters:
   #   - type: RequestHeaderModifier
   #     requestHeaderModifier:
@@ -126,11 +126,11 @@ resources: {}
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
-    path: /health
+    path: /
     port: http
 readinessProbe:
   httpGet:
-    path: /health
+    path: /
     port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
@@ -160,23 +160,12 @@ tolerations: []
 
 affinity: {}
 
-# This is for the migrations that will be run on pre-install and pre-upgrade
 migration:
   enabled: true
 
-# This is for the environment variables that will be passed to the container
-# It is recommended to use a secret for production environments
-# env:
-#   - name: DATABASE_URL
-#     value: "postgresql://user:password@host:port/database"
-env:
-  - name: POSTGRES_HOST
-    value: ""
-  - name: POSTGRES_PORT
-    value: ""
-  - name: POSTGRES_USER
-    value: ""
-  - name: POSTGRES_PASSWORD
-    value: ""
-  - name: POSTGRES_DB
-    value: ""
+postgres:
+  host: ""
+  port: "5432"
+  user: ""
+  password: ""
+  database: ""

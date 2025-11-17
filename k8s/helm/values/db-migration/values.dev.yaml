@@ -1,0 +1,14 @@
+migration:
+  enabled: true
+
+image:
+  repository: backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+postgres:
+  host: postgres-stack-postgres
+  port: "5432"
+  user: changeme-default-dnd
+  password: changeme-default-password
+  database: changeme-default-dnd

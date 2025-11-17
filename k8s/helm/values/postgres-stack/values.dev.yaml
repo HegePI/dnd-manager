@@ -3,21 +3,96 @@ postgres:
     repository: hegepi/pg-graphql-postgres
     tag: latest
     pullPolicy: IfNotPresent
-  postgresUser: dnd
-  postgresPassword: password
-  postgresDatabase: dnd
+  postgresUser: changeme-default-user-dnd
+  postgresPassword: changeme-default-password-dnd
+  postgresDatabase: changeme-default-db-dnd
   persistence:
     enabled: true
     size: 1Gi
     accessModes:
       - ReadWriteOnce
-    storageClass: ""
   volumePermissions:
     enabled: true
+    usePostgresImage: true
     image:
-      repository: bitnami/os-shell
-      tag: latest
+      repository: busybox
+      tag: "1.36.1"
       pullPolicy: IfNotPresent
+    containerSecurityContext:
+      runAsUser: 0  # Must run as root to change ownership
+      runAsGroup: 0
+      runAsNonRoot: false
+      privileged: true  # Add privileged mode to ensure we can modify permissions
+  securityContext:
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+  # Add initialization script to create database and extensions
+  initdbScript: |
+    -- Create database
+    CREATE DATABASE {{ .Values.postgres.postgresDatabase | default "postgres" }};
+    \connect {{ .Values.postgres.postgresDatabase | default "postgres" }};
+
+    -- Create extensions
+    CREATE EXTENSION IF NOT EXISTS pg_graphql;
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
+    CREATE EXTENSION IF NOT EXISTS pgsodium;
+    CREATE EXTENSION IF NOT EXISTS pg_vault;
+    CREATE EXTENSION IF NOT EXISTS pg_audit;
+
+    -- Create anon role
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon NOINHERIT;
+      END IF;
+    END$$;
+
+    -- Create GraphQL wrapper function
+    CREATE OR REPLACE FUNCTION public.graphql_rpc(payload json)
+    RETURNS jsonb
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+    AS $$
+    BEGIN
+      RETURN graphql.resolve(payload->>'query');
+    END;
+    $$;
+
+    GRANT EXECUTE ON FUNCTION public.graphql_rpc(json) TO anon;
+  # Optional custom config files to be mounted under /etc/postgresql-custom
+  # Provide key: filename, value: file contents
+  customConfig:
+    postgresql.conf: |
+      # Basic PostgreSQL configuration
+      listen_addresses = '*'
+      port = 5432
+      max_connections = 100
+      shared_buffers = 128MB
+      dynamic_shared_memory_type = posix
+      max_wal_size = 1GB
+      min_wal_size = 80MB
+      log_timezone = 'Etc/UTC'
+      datestyle = 'iso, mdy'
+      timezone = 'Etc/UTC'
+      lc_messages = 'en_US.utf8'
+      lc_monetary = 'en_US.utf8'
+      lc_numeric = 'en_US.utf8'
+      lc_time = 'en_US.utf8'
+      default_text_search_config = 'pg_catalog.english'
+      include_dir = '/etc/postgresql-custom'
+
+    wal-g.conf: |
+      # WAL-G configuration placeholder
+      # Empty file to satisfy PostgreSQL's include directive
+
+    read-replica.conf: |
+      # Read replica configuration placeholder
+      # Empty file to satisfy PostgreSQL's include directive
+
+    supautils.conf: |
+      # Supautils configuration placeholder
+      # Empty file to satisfy PostgreSQL's include directive
 
 postgrest:
   enabled: true

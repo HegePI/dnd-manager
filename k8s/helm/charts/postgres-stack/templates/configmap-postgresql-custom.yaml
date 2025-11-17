@@ -1,0 +1,11 @@
+{{- if .Values.postgres.customConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgresql-custom
+data:
+{{- range $fname, $content := .Values.postgres.customConfig }}
+  {{ $fname }}: |
+{{ $content | indent 4 }}
+{{- end }}
+{{- end }}

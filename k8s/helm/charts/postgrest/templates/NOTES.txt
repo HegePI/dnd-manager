@@ -1,9 +1,0 @@
-1. Get the application URL by running these commands:
-
-  NOTE: The chart does not enable ingress by default. Port-forwarding maybe used for local dev.
-
-  kubectl port-forward svc/{{ include "postgrest.fullname" . }} 3000:{{ .Values.service.port }} &
-
-2. PostgREST uses the following environment variables (configured by values.yaml):
-   - PGRST_DB_URI
-   - PGRST_DB_ANON_ROLE

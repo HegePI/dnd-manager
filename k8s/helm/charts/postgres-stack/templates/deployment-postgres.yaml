@@ -17,72 +17,142 @@ spec:
         app: {{ include "postgres-stack.fullname" . }}-postgres
     spec:
       securityContext:
-        runAsUser: {{ .Values.postgres.securityContext.runAsUser | default 1001 }}
-        runAsGroup: {{ .Values.postgres.securityContext.runAsGroup | default 1001 }}
-        fsGroup: {{ .Values.postgres.securityContext.fsGroup | default 1001 }}
-{{- if .Values.postgres.volumePermissions.enabled }}
+        {{- with .Values.postgres.securityContext }}
+        {{- if .runAsUser }}
+        runAsUser: {{ .runAsUser }}
+        {{- end }}
+        {{- if .runAsGroup }}
+        runAsGroup: {{ .runAsGroup }}
+        {{- end }}
+        {{- if .fsGroup }}
+        fsGroup: {{ .fsGroup }}
+        {{- end }}
+        {{- end }}
+
+      {{- if .Values.postgres.volumePermissions.enabled }}
       initContainers:
         - name: volume-permissions
-          image: "{{ .Values.postgres.volumePermissions.image.repository }}:{{ .Values.postgres.volumePermissions.image.tag }}"
-          imagePullPolicy: {{ .Values.postgres.volumePermissions.image.pullPolicy }}
+          image: "{{ if .Values.postgres.volumePermissions.usePostgresImage }}{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}{{ else }}{{ .Values.postgres.volumePermissions.image.repository }}:{{ .Values.postgres.volumePermissions.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.postgres.volumePermissions.image.pullPolicy | default "IfNotPresent" }}
           command:
             - sh
             - -c
             - |
-              set -e
-              chown -R {{ .Values.postgres.securityContext.runAsUser | default 1001 }}:{{ .Values.postgres.securityContext.runAsGroup | default 1001 }} /var/lib/postgresql/data || true
+              set -ex
+              echo "Creating required directories..."
+              mkdir -p /var/lib/postgresql/data /var/run/postgresql /etc/postgresql-custom
+              echo "Setting ownership to {{ .Values.postgres.securityContext.runAsUser }}:{{ .Values.postgres.securityContext.runAsGroup }}"
+              chown {{ .Values.postgres.securityContext.runAsUser }}:{{ .Values.postgres.securityContext.runAsGroup }} \
+                /var/lib/postgresql/data /var/run/postgresql
+              if [ -d "/config-source/postgres-config" ]; then
+                echo "Copying postgresql configuration files..."
+                cp -aL /config-source/postgres-config/. /etc/postgresql/
+                chown -R {{ .Values.postgres.securityContext.runAsUser }}:{{ .Values.postgres.securityContext.runAsGroup }} /etc/postgresql/
+              fi
+              if [ -d "/config-source/postgres-custom" ]; then
+                echo "Copying custom configuration files..."
+                # dereference symlinks from configMap mounts so copied files are regular files
+                cp -aL /config-source/postgres-custom/. /etc/postgresql-custom/
+                chown -R {{ .Values.postgres.securityContext.runAsUser }}:{{ .Values.postgres.securityContext.runAsGroup }} /etc/postgresql-custom/
+                # Set extra restrictive permissions on pgsodium key file
+                if [ -f "/etc/postgresql-custom/pgsodium_root.key" ]; then
+                  echo "Setting restrictive permissions on pgsodium key file..."
+                  chmod 0600 /etc/postgresql-custom/pgsodium_root.key
+                  chown {{ .Values.postgres.securityContext.runAsUser }}:{{ .Values.postgres.securityContext.runAsGroup }} /etc/postgresql-custom/pgsodium_root.key
+                fi
+              fi
+              echo "Setting permissions recursively on data directory..."
+              find /var/lib/postgresql/data -type d -exec chmod 0750 {} \; || true
+              find /var/lib/postgresql/data -type f -exec chmod 0640 {} \; || true
+              echo "Setting permissions on runtime directories..."
+              chmod 0750 /var/run/postgresql /etc/postgresql /etc/postgresql-custom
+              echo "Verifying permissions..."
+              ls -la /var/lib/postgresql/data /var/run/postgresql /etc/postgresql-custom
+              echo "Volume permissions setup completed successfully"
+          securityContext: {{ toYaml .Values.postgres.volumePermissions.containerSecurityContext | nindent 12 }}
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-          securityContext:
-{{ toYaml .Values.postgres.volumePermissions.containerSecurityContext | indent 12 }}
-{{- end }}
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: postgres-config
+              mountPath: /config-source/postgres-config
+            - name: postgres-config-writable
+              mountPath: /etc/postgresql
+            - name: postgres-custom
+              mountPath: /config-source/postgres-custom
+            - name: postgres-custom-writable
+              mountPath: /etc/postgresql-custom
+      {{- end }}
+
       containers:
         - name: postgres
           image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
-          imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy | default "IfNotPresent" }}
           ports:
-            - containerPort: {{ .Values.service.postgres.port }}
+            - containerPort: 5432
               name: postgres
           env:
             - name: POSTGRES_USER
-              value: {{ quote .Values.postgres.postgresUser }}
+              value: {{ .Values.postgres.postgresUser | default "postgres" | quote }}
             - name: POSTGRES_PASSWORD
-              value: {{ quote .Values.postgres.postgresPassword }}
+              value: {{ .Values.postgres.postgresPassword | default "postgres" | quote }}
             - name: POSTGRES_DB
-              value: {{ quote .Values.postgres.postgresDatabase }}
+              value: {{ .Values.postgres.postgresDatabase | default "postgres" | quote }}
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          args:
+            - "--config-file=/etc/postgresql/postgresql.conf"
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
-{{- if .Values.postgres.initdbScript }}
-            - name: initdb
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: init-sql
               mountPath: /docker-entrypoint-initdb.d
               readOnly: true
-{{- end }}
+            - name: postgres-config-writable
+              mountPath: /etc/postgresql
+            - name: postgres-custom-writable
+              mountPath: /etc/postgresql-custom
+              readOnly: true
+
       volumes:
-{{- if not .Values.postgres.persistence.enabled }}
+        - name: postgres-config
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-postgresql-config
+        - name: postgres-custom
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-postgresql-custom
+        - name: init-sql
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-init-sql
+        - name: run
+          emptyDir: {}
+        - name: postgres-config-writable
+          emptyDir: {}
+        - name: postgres-custom-writable
+          emptyDir: {}
+        {{- if not .Values.postgres.persistence.enabled }}
         - name: data
           emptyDir: {}
-{{- end }}
-{{- if .Values.postgres.initdbScript }}
-        - name: initdb
-          configMap:
-            name: {{ include "postgres-stack.fullname" . }}-initdb
-{{- end }}
+        {{- end }}
 
+  {{- if .Values.postgres.persistence.enabled }}
   volumeClaimTemplates:
-{{- if .Values.postgres.persistence.enabled }}
     - metadata:
         name: data
         labels:
           app: {{ include "postgres-stack.fullname" . }}-postgres
       spec:
         accessModes:
-{{ toYaml .Values.postgres.persistence.accessModes | indent 10 }}
+        {{- range .Values.postgres.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if .Values.postgres.persistence.storageClass }}
+        storageClassName: {{ .Values.postgres.persistence.storageClass }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.postgres.persistence.size }}
-{{- if .Values.postgres.persistence.storageClass }}
-        storageClassName: {{ .Values.postgres.persistence.storageClass }}
-{{- end }}
-{{- end }}
+  {{- end }}

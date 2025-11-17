@@ -5,11 +5,11 @@ postgres:
     repository: hegepi/pg-graphql-postgres
     tag: latest
     pullPolicy: IfNotPresent
-  postgresUser: dnd
-  postgresPassword: password
-  postgresDatabase: dnd
+  postgresUser: changeme-default-user-dnd
+  postgresPassword: changeme-default-password-dnd
+  postgresDatabase: changeme-default-db-dnd
   persistence:
-    enabled: false
+    enabled: true
     storageClass: ""
     accessModes:
       - ReadWriteOnce
@@ -21,7 +21,7 @@ postgres:
     fsGroup: 1001
   # When true, create an initContainer to fix permissions on the PVC before postgres starts
   volumePermissions:
-    enabled: false
+    enabled: true
     image:
       repository: bitnami/os-shell
       tag: latest
@@ -31,6 +31,9 @@ postgres:
       runAsUser: 0
       runAsGroup: 0
       runAsNonRoot: false
+  data:
+    000-initdb.sql: |
+      {{ tpl .Values.postgres.initdbScript . | indent 4 }}
   initdbScript: |-
     -- Create an anon role for PostgREST and a wrapper RPC for GraphQL
     DO $$
@@ -40,7 +43,7 @@ postgres:
       END IF;
     END$$;
 
-    \connect dnd
+    \connect {{ .Values.postgres.postgresDatabase | default "postgres" }}
 
     CREATE EXTENSION IF NOT EXISTS pg_graphql;
 

@@ -8,6 +8,10 @@ build:
     tryImportMissing: false
     useDockerCLI: false
   artifacts:
+    - image: hegepi/pg-graphql-postgres
+      context: pg-graphql-postgres
+      docker:
+        dockerfile: Dockerfile
     - image: backend
       context: backend
       docker:
@@ -31,4 +35,7 @@ deploy:
         chartPath: k8s/helm/charts/frontend
         valuesFiles:
           - "k8s/helm/values/frontend/values.dev.yaml"
-      # postgrest is now bundled inside the postgres-stack chart for local dev
+      - name: db-migration
+        chartPath: k8s/helm/charts/db-migration
+        valuesFiles:
+          - "k8s/helm/values/db-migration/values.dev.yaml"
