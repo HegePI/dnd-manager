@@ -12,11 +12,11 @@ build:
       context: pg-graphql-postgres
       docker:
         dockerfile: Dockerfile
-    - image: backend
+    - image: hegepi/backend
       context: backend
       docker:
         dockerfile: Dockerfile
-    - image: frontend
+    - image: hegepi/frontend
       context: frontend
       docker:
         dockerfile: Dockerfile
