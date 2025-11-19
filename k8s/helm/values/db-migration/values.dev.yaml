@@ -2,7 +2,7 @@ migration:
   enabled: true
 
 image:
-  repository: backend
+  repository: hegepi/dbmigration
   tag: latest
   pullPolicy: IfNotPresent
 
