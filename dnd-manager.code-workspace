@@ -5,19 +5,24 @@
             "path": "."
         },
         {
+            "name": "backend",
             "path": "backend"
         },
         {
-            "path": "system-tests"
+            "name": "db-migration",
+            "path": "db-migration"
         },
         {
+            "name": "frontend",
             "path": "frontend"
         },
         {
+            "name": "k8s",
             "path": "k8s"
         },
         {
-            "path": "db-migration"
+            "name": "system-tests",
+            "path": "system-tests"
         }
     ],
     "extensions": {
