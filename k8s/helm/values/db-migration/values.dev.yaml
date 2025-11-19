@@ -7,7 +7,7 @@ image:
   pullPolicy: IfNotPresent
 
 postgres:
-  host: postgres-stack-postgres
+  host: postgres-stack-postgres-stack-postgres
   port: "5432"
   user: changeme-default-dnd
   password: changeme-default-password

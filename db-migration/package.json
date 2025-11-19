@@ -23,9 +23,7 @@
     "pg": "^8.16.3"
   },
   "scripts": {
-    "migrate:create": "bunx node-pg-migrate create",
-    "migrate:up": "bunx node-pg-migrate up",
-    "migrate:down": "bunx node-pg-migrate down",
+    "migrate": "node-pg-migrate -j ts",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write ."
   }

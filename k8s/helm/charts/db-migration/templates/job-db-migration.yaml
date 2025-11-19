@@ -34,7 +34,7 @@ spec:
               done
               echo "Database is up - executing migration scripts"
 
-              bun run migrate:up
+              DATABASE_URL="postgresql://$POSTGRES_USER:$PGPASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DATABASE" bun run migrate up
               echo "Database migration completed successfully"
           securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           env:

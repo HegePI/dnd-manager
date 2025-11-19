@@ -20,7 +20,7 @@ build:
       context: frontend
       docker:
         dockerfile: Dockerfile
-    - image: hegepi/db-migrations
+    - image: hegepi/dbmigration
       context: db-migration
       docker:
         dockerfile: Dockerfile
