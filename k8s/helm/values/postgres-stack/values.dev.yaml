@@ -15,35 +15,6 @@ postgres:
     runAsUser: 1001
     runAsGroup: 1001
     fsGroup: 1001
-  # Add initialization script to create database and extensions
-  initdbScript: |
-    -- Create database
-    CREATE DATABASE {{ .Values.postgres.postgresDatabase | default "postgres" }};
-    \connect {{ .Values.postgres.postgresDatabase | default "postgres" }};
-
-    -- Create extensions
-    CREATE EXTENSION IF NOT EXISTS pg_graphql;
-
-    -- Create anon role
-    DO $$
-    BEGIN
-      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
-        CREATE ROLE anon NOINHERIT;
-      END IF;
-    END$$;
-
-    -- Create GraphQL wrapper function
-    CREATE OR REPLACE FUNCTION public.graphql_rpc(payload json)
-    RETURNS jsonb
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    AS $$
-    BEGIN
-      RETURN graphql.resolve(payload->>'query');
-    END;
-    $$;
-
-    GRANT EXECUTE ON FUNCTION public.graphql_rpc(json) TO anon;
 
 postgrest:
   enabled: true

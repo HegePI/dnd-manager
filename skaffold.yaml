@@ -56,7 +56,7 @@ profiles:
               - "k8s/helm/values/graphiql/values.dev.yaml"
     portForward:
       - resourceType: service
-        resourceName: postgrest
+        resourceName: postgres-stack-postgres-stack-postgrest
         namespace: default
         port: 3000
         localPort: 3001

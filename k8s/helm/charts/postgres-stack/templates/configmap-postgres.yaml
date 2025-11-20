@@ -9,31 +9,44 @@ data:
     ALTER SYSTEM SET max_connections TO '100';
 
   01-init.sql: |
-    \c {{ .Values.postgres.postgresDatabase | default "postgres" }};
-
     -- Create extensions
     CREATE EXTENSION IF NOT EXISTS pg_graphql;
 
     -- Create anon role
-    DO $$
-    BEGIN
-      IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
-        CREATE ROLE anon NOINHERIT;
-      END IF;
-    END$$;
+    CREATE ROLE anon;
 
-    -- Create GraphQL wrapper function
-    CREATE OR REPLACE FUNCTION public.graphql_rpc(payload json)
-    RETURNS jsonb
-    LANGUAGE plpgsql
-    SECURITY DEFINER
+    GRANT USAGE ON SCHEMA public TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon; 
+
+    GRANT usage on schema graphql to anon;
+    grant all on function graphql.resolve to anon;
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON TABLES TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON FUNCTIONS TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON SEQUENCES TO anon;
+
+
+    -- GraphQL Entrypoint
+    CREATE OR REPLACE FUNCTION graphql(
+        "operationName" text default null,
+        query text default null,
+        variables jsonb default null,
+        extensions jsonb default null
+    )
+        returns jsonb
+        language sql
     AS $$
-    BEGIN
-      RETURN graphql.resolve(payload->>'query');
-    END;
+        SELECT graphql.resolve(
+            query := query,
+            variables := coalesce(variables, '{}'),
+            "operationName" := "operationName",
+            extensions := extensions
+        );
     $$;
 
-    GRANT EXECUTE ON FUNCTION public.graphql_rpc(json) TO anon;
+    COMMENT ON SCHEMA PUBLIC IS '@graphql({"inflect_names": true})';
 
   02-pg_hba.conf: |
     # TYPE  DATABASE        USER            ADDRESS                 METHOD
