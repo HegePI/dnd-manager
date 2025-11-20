@@ -9,6 +9,6 @@ image:
 postgres:
   host: postgres-stack-postgres-stack-postgres
   port: "5432"
-  user: changeme-default-dnd
-  password: changeme-default-password
-  database: changeme-default-dnd
+  user: changeme-default-user-dnd
+  password: changeme-default-password-dnd
+  database: changeme-default-db-dnd
