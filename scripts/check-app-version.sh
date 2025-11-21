@@ -48,7 +48,7 @@ get_helm_app_version() {
         echo "Warning: yq found but could not parse $file; falling back to sed" >&2
     fi
     # fallback to sed for simple parsing
-    sed -n "s/^[[:space:]]*appVersion:[[:space:]]*[\"'\{0,1\}]\{0,1\}\([^\"'[:space:]]*\).*/\1/p" "$file" | head -n1
+    sed -nE "s/^[[:space:]]*appVersion:[[:space:]]*[\"']?([^\"'[:space:]]*).*/\1/p" "$file" | head -n1  
 }
 
 FRONTEND_PKG="frontend/package.json"

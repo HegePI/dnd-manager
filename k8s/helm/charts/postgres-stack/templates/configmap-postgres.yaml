@@ -3,11 +3,6 @@ kind: ConfigMap
 metadata:
   name: {{ include "postgres-stack.fullname" . }}-init-sql
 data:
-  00-configure.sql: |
-    ALTER SYSTEM SET listen_addresses TO '*';
-    ALTER SYSTEM SET shared_buffers TO '128MB';
-    ALTER SYSTEM SET max_connections TO '100';
-
   01-init.sql: |
     -- Create extensions
     CREATE EXTENSION IF NOT EXISTS pg_graphql;
@@ -60,7 +55,7 @@ data:
     host replication all    127.0.0.1/32    trust
     host replication all    ::1/128         trust
     # Allow from within k8s
-    host    all             all             0.0.0.0/0              md5
+    host    all             all             10.0.0.0/8              md5
 
   03-postgresql.conf: |
     # Custom PostgreSQL Configuration

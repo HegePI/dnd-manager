@@ -38,11 +38,20 @@ spec:
               name: postgres
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.postgres.postgresUser | default "postgres" | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-user
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.postgres.postgresPassword | default "postgres" | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-password
             - name: POSTGRES_DB
-              value: {{ .Values.postgres.postgresDatabase | default "postgres" | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-database
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           args:
@@ -67,8 +76,6 @@ spec:
           configMap:
             name: {{ include "postgres-stack.fullname" . }}-init-sql
             items:
-              - key: 00-configure.sql
-                path: 00-configure.sql
               - key: 01-init.sql
                 path: 01-init.sql
         - name: pg-hba-conf

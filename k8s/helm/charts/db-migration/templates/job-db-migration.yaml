@@ -39,14 +39,29 @@ spec:
           securityContext: {{ toYaml .Values.securityContext | nindent 12 }}
           env:
             - name: POSTGRES_USER
-              value: {{ .Values.postgres.user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  key: postgres-user
             - name: PGPASSWORD
-              value: {{ .Values.postgres.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  key: postgres-password
             - name: POSTGRES_HOST
-              value: {{ .Values.postgres.host | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  key: postgres-host
             - name: POSTGRES_PORT
-              value: {{ .Values.postgres.port | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  key: postgres-port
             - name: POSTGRES_DATABASE
-              value: {{ .Values.postgres.database | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  key: postgres-database
 {{- end }}
 
