@@ -28,18 +28,13 @@
     "extensions": {
         "recommendations": [
             "aaron-bond.better-comments",
-            "ms-azuretools.vscode-docker",
             "editorconfig.editorconfig",
             "usernamehw.errorlens",
             "github.vscode-pull-request-github",
-            "googlecloudtools.cloudcode",
-            "wix.vscode-import-cost",
-            "ms-kubernetes-tools.vscode-kubernetes-tools",
-            "sakamoto66.vscode-playwright-test-runner",
-            "mquandalle.graphql",
-            "svelte.svelte-vscode",
             "GitHub.copilot",
-            "github.vscode-github-actions"
+            "github.vscode-github-actions",
+            "google.geminicodeassist",
+            "eamodio.gitlens"
         ]
     },
     "tasks": {

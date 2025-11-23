@@ -11,7 +11,10 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"generate": "graphql-codegen",
+		"schema": "https://localhost:3001/rpc/graphql",
+		"documents": "**/*.gql"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^4.1.1",
@@ -20,6 +23,9 @@
 		"@eslint/js": "^9.38.0",
 		"@eslint/json": "^0.13.2",
 		"@eslint/markdown": "^7.5.0",
+		"@graphql-codegen/cli": "^6.1.0",
+		"@graphql-codegen/typescript": "^5.0.5",
+		"@graphql-codegen/typescript-operations": "^5.0.5",
 		"@storybook/addon-a11y": "^9.1.15",
 		"@storybook/addon-docs": "^9.1.15",
 		"@storybook/addon-svelte-csf": "^5.0.10",
@@ -39,6 +45,8 @@
 		"eslint-plugin-storybook": "^9.1.15",
 		"eslint-plugin-svelte": "^3.12.5",
 		"globals": "^16.4.0",
+		"graphql": "^16.12.0",
+		"graphql-codegen-svelte-apollo": "^1.1.0",
 		"jiti": "^2.6.1",
 		"playwright": "^1.56.1",
 		"prettier": "^3.6.2",
