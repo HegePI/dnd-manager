@@ -17,13 +17,25 @@
             "path": "frontend"
         },
         {
+            "name":"graphiql",
+            "path":"graphiql"
+        },
+        {
             "name": "k8s",
             "path": "k8s"
         },
         {
+            "name": "pg-graphql-postgres",
+            "path": "pg-graphql-postgres"
+        },
+        {
+            "name": "scripts",
+            "path": "scripts"
+        },
+        {
             "name": "system-tests",
             "path": "system-tests"
-        }
+        },
     ],
     "extensions": {
         "recommendations": [

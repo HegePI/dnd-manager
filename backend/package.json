@@ -1,44 +1,44 @@
 {
-  "name": "dnd-manager-backend",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "start": "bun dist/src/index.js",
-    "build": "tsc",
-    "migrate:create": "bunx node-pg-migrate create",
-    "migrate:up": "bunx node-pg-migrate up",
-    "migrate:down": "bunx node-pg-migrate down",
-    "lint": "prettier --check . && eslint .",
-    "test": "bun test",
-    "format": "prettier --write ."
-  },
-  "dependencies": {
-    "@apollo/server": "^4.12.2",
-    "@types/ws": "^8.18.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.6.1",
-    "express": "^4.21.2",
-    "graphql": "^16.11.0",
-    "graphql-ws": "^6.0.6",
-    "pg": "^8.16.3",
-    "ws": "^8.18.3"
-  },
-  "devDependencies": {
-    "@eslint/css": "^0.13.0",
-    "@eslint/js": "^9.38.0",
-    "@eslint/json": "^0.13.2",
-    "@eslint/markdown": "^7.5.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^4.17.24",
-    "@types/node": "^24.9.1",
-    "@types/pg": "^8.15.5",
-    "eslint": "^9.38.0",
-    "eslint-plugin-security": "^3.0.1",
-    "globals": "^16.4.0",
-    "jiti": "^2.6.1",
-    "node-pg-migrate": "^8.0.3",
-    "prettier": "^3.6.2",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2"
-  }
+    "name": "dnd-manager-backend",
+    "version": "0.0.1",
+    "scripts": {
+        "dev": "bun --watch src/index.ts",
+        "start": "bun dist/src/index.js",
+        "build": "tsc",
+        "migrate:create": "bunx node-pg-migrate create",
+        "migrate:up": "bunx node-pg-migrate up",
+        "migrate:down": "bunx node-pg-migrate down",
+        "lint": "prettier --check . && eslint .",
+        "test": "bun test",
+        "format": "prettier --write ."
+    },
+    "dependencies": {
+        "@apollo/server": "^4.12.2",
+        "@types/ws": "^8.18.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.6.1",
+        "express": "^4.21.2",
+        "graphql": "^16.11.0",
+        "graphql-ws": "^6.0.6",
+        "pg": "^8.16.3",
+        "ws": "^8.18.3"
+    },
+    "devDependencies": {
+        "@eslint/css": "^0.13.0",
+        "@eslint/js": "^9.38.0",
+        "@eslint/json": "^0.13.2",
+        "@eslint/markdown": "^7.5.0",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^4.17.24",
+        "@types/node": "^24.9.1",
+        "@types/pg": "^8.15.5",
+        "eslint": "^9.38.0",
+        "eslint-plugin-security": "^3.0.1",
+        "globals": "^16.4.0",
+        "jiti": "^2.6.1",
+        "node-pg-migrate": "^8.0.3",
+        "prettier": "^3.6.2",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.2"
+    }
 }

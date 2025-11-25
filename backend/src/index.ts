@@ -16,79 +16,79 @@ import { typeDefs } from "./gql/schema.js";
 dotenv.config();
 
 const {
-  POSTGRES_HOST,
-  POSTGRES_PORT,
-  POSTGRES_DB,
-  POSTGRES_USER,
-  POSTGRES_PASSWORD,
-  PORT,
+    POSTGRES_HOST,
+    POSTGRES_PORT,
+    POSTGRES_DB,
+    POSTGRES_USER,
+    POSTGRES_PASSWORD,
+    PORT,
 } = process.env;
 
 export const pool = new Pool({
-  host: POSTGRES_HOST,
-  port: Number(POSTGRES_PORT),
-  database: POSTGRES_DB,
-  user: POSTGRES_USER,
-  password: POSTGRES_PASSWORD,
+    host: POSTGRES_HOST,
+    port: Number(POSTGRES_PORT),
+    database: POSTGRES_DB,
+    user: POSTGRES_USER,
+    password: POSTGRES_PASSWORD,
 });
 
 export interface Context {
-  pool: Pool;
-  req: unknown;
+    pool: Pool;
+    req: unknown;
 }
 
 const start = async () => {
-  const app = express();
-  const httpServer = http.createServer(app);
+    const app = express();
+    const httpServer = http.createServer(app);
 
-  const wsServer = new WebSocketServer({
-    server: httpServer,
-    path: "/subscription",
-  });
+    const wsServer = new WebSocketServer({
+        server: httpServer,
+        path: "/subscription",
+    });
 
-  const schema = makeExecutableSchema({ typeDefs, resolvers });
-  const serverCleanup = useServer({ schema }, wsServer);
+    const schema = makeExecutableSchema({ typeDefs, resolvers });
+    const serverCleanup = useServer({ schema }, wsServer);
 
-  const server = new ApolloServer({
-    schema,
-    plugins: [
-      ApolloServerPluginDrainHttpServer({ httpServer }),
-      {
-        async serverWillStart() {
-          return {
-            async drainServer() {
-              await serverCleanup.dispose();
+    const server = new ApolloServer({
+        schema,
+        plugins: [
+            ApolloServerPluginDrainHttpServer({ httpServer }),
+            {
+                async serverWillStart() {
+                    return {
+                        async drainServer() {
+                            await serverCleanup.dispose();
+                        },
+                    };
+                },
             },
-          };
-        },
-      },
-    ],
-  });
+        ],
+    });
 
-  await server.start();
+    await server.start();
 
-  app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
-  });
+    app.get("/health", (req, res) => {
+        res.status(200).json({ status: "ok" });
+    });
 
-  app.use(
-    "/",
-    cors(),
-    express.json(),
-    expressMiddleware(server, {
-      context: async ({ req }) => {
-        const context: Context = {
-          req,
-          pool: pool,
-        };
-        return context;
-      },
-    }),
-  );
-  const port = Number(PORT) || 4000;
-  httpServer.listen(port, "0.0.0.0", () =>
-    console.log(`Server is now running on http://0.0.0.0:${port}`),
-  );
+    app.use(
+        "/",
+        cors(),
+        express.json(),
+        expressMiddleware(server, {
+            context: async ({ req }) => {
+                const context: Context = {
+                    req,
+                    pool: pool,
+                };
+                return context;
+            },
+        }),
+    );
+    const port = Number(PORT) || 4000;
+    httpServer.listen(port, "0.0.0.0", () =>
+        console.log(`Server is now running on http://0.0.0.0:${port}`),
+    );
 };
 
 start();
