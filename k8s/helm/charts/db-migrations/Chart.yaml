@@ -1,5 +1,5 @@
 apiVersion: v2
-name: db-migration
+name: db-migrations
 description: A Helm chart for running database migrations
 type: application
 version: 0.1.0

@@ -9,8 +9,8 @@
             "path": "backend"
         },
         {
-            "name": "db-migration",
-            "path": "db-migration"
+            "name": "db-migrations",
+            "path": "db-migrations"
         },
         {
             "name": "frontend",

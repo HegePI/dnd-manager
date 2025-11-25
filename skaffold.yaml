@@ -20,12 +20,12 @@ build:
       context: frontend
       docker:
         dockerfile: Dockerfile
-    - image: hegepi/dbmigration
-      context: db-migration
+    - image: hegepi/db-migrations
+      context: db-migrations
       docker:
         dockerfile: Dockerfile
     - image: hegepi/dnd-manager-graphiql
-      context: pg-graphql-postgres/graphiql
+      context: graphiql
       docker: 
         dockerfile: Dockerfile
 
@@ -46,10 +46,10 @@ profiles:
             chartPath: k8s/helm/charts/frontend
             valuesFiles:
               - "k8s/helm/values/frontend/values.dev.yaml"
-          - name: db-migration
-            chartPath: k8s/helm/charts/db-migration
+          - name: db-migrations
+            chartPath: k8s/helm/charts/db-migrations
             valuesFiles:
-              - "k8s/helm/values/db-migration/values.dev.yaml"
+              - "k8s/helm/values/db-migrations/values.dev.yaml"
           - name: graphiql
             chartPath: k8s/helm/charts/graphiql
             valuesFiles:
@@ -59,12 +59,17 @@ profiles:
         resourceName: postgres-stack-postgrest
         namespace: default
         port: 3000
-        localPort: 3001
+        localPort: 3000
       - resourceType: service
         resourceName: graphiql
         namespace: default
         port: 80
         localPort: 3002
+      - resourceType: service
+        resourceName: frontend
+        namespace: default
+        port: 3100
+        localPort: 3100
 
   - name: prod
     deploy:
@@ -82,7 +87,7 @@ profiles:
             chartPath: k8s/helm/charts/frontend
             valuesFiles:
               - "k8s/helm/values/frontend/values.prod.yaml"
-          - name: db-migration
-            chartPath: k8s/helm/charts/db-migration
+          - name: db-migrations
+            chartPath: k8s/helm/charts/db-migrations
             valuesFiles:
-              - "k8s/helm/values/db-migration/values.prod.yaml"
+              - "k8s/helm/values/db-migrations/values.prod.yaml"

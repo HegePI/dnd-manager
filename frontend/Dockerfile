@@ -20,6 +20,7 @@ FROM base AS release
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/build . 
 
-USER bun 
-EXPOSE 3000
+USER bun
+ENV PORT=3100
+EXPOSE 3100
 ENTRYPOINT [ "bun", "index.js" ]

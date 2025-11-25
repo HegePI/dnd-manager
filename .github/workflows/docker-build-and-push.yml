@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         # Add all services you want to build here
-        service: [frontend, db-migration, pg-graphql-postgres, graphiql]
+        service: [frontend, db-migrations, pg-graphql-postgres, graphiql]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

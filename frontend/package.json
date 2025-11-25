@@ -13,7 +13,7 @@
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
 		"generate": "graphql-codegen",
-		"schema": "https://localhost:3001/rpc/graphql",
+		"schema": "https://localhost:3000/rpc/graphql",
 		"documents": "**/*.gql"
 	},
 	"devDependencies": {

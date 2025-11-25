@@ -2,22 +2,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "db-migration.fullname" . }}-job
+  name: {{ include "db-migrations.fullname" . }}-job
   labels:
-    app.kubernetes.io/name: {{ include "db-migration.name" . }}
+    app.kubernetes.io/name: {{ include "db-migrations.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 spec:
   template:
     metadata:
       labels:
-        app: {{ include "db-migration.fullname" . }}-job
+        app: {{ include "db-migrations.fullname" . }}-job
     spec:
       {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ include "db-migration.serviceAccountName" . }}
+      serviceAccountName: {{ include "db-migrations.serviceAccountName" . }}
       {{- end }}
       restartPolicy: OnFailure
       containers:
-        - name: db-migration
+        - name: db-migrations
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           command:
@@ -41,27 +41,27 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  name: {{ include "db-migrations.fullname" . }}-db-credentials
                   key: postgres-user
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  name: {{ include "db-migrations.fullname" . }}-db-credentials
                   key: postgres-password
             - name: POSTGRES_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  name: {{ include "db-migrations.fullname" . }}-db-credentials
                   key: postgres-host
             - name: POSTGRES_PORT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  name: {{ include "db-migrations.fullname" . }}-db-credentials
                   key: postgres-port
             - name: POSTGRES_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "db-migration.fullname" . }}-db-credentials
+                  name: {{ include "db-migrations.fullname" . }}-db-credentials
                   key: postgres-database
 {{- end }}
 
