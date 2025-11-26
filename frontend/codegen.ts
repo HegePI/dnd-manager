@@ -3,14 +3,14 @@ import { addTypenameSelectionDocumentTransform } from '@graphql-codegen/client-p
 
 const config: CodegenConfig = {
 	schema: 'http://localhost:3000/rpc/graphql', // Using the local endpoint, update if needed
-	documents: 'src/**/*.gql',
+	documents: 'src/**/*.svelte',
 	overwrite: true,
 	ignoreNoDocuments: true,
 	generates: {
 		'src/lib/gql/': {
 			preset: 'client',
 			documentTransforms: [addTypenameSelectionDocumentTransform],
-			plugins: ['typescript', 'typescript-operations', 'graphql-codegen-svelte-apollo'],
+			plugins: [],
 			config: {
 				scalars: {
 					UUID: 'string',
@@ -21,7 +21,8 @@ const config: CodegenConfig = {
 					BigInt: 'string',
 					BigFloat: 'string',
 					Opaque: 'any'
-				}
+				},
+				useTypeImports: true
 			}
 		}
 	},

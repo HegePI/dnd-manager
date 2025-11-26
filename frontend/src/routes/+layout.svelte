@@ -1,6 +1,7 @@
-<script>
-	import Header from '../stories/Header.svelte';
+<script lang="ts">
+	import { cacheExchange, Client, fetchExchange, setContextClient } from '@urql/svelte';
 	import Footer from '../stories/Footer.svelte';
+	import Header from '../stories/Header.svelte';
 	/**
 	 * @typedef {Object} Props
 	 * @property {import('svelte').Snippet} [children]
@@ -8,6 +9,13 @@
 
 	/** @type {Props} */
 	let { children } = $props();
+
+	const client = new Client({
+		url: 'http://localhost:3000/rpc/graphql',
+		exchanges: [cacheExchange, fetchExchange]
+	});
+
+	setContextClient(client);
 
 	const onLogin = () => {
 		alert('Login clicked');
