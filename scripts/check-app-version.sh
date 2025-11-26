@@ -52,19 +52,13 @@ get_helm_app_version() {
 }
 
 FRONTEND_PKG="frontend/package.json"
-BACKEND_PKG="backend/package.json"
 FRONTEND_CHART="k8s/helm/charts/frontend/Chart.yaml"
-BACKEND_CHART="k8s/helm/charts/backend/Chart.yaml"
 
 FRONTEND_PACKAGE_VERSION="$(get_package_version "$FRONTEND_PKG")"
-BACKEND_PACKAGE_VERSION="$(get_package_version "$BACKEND_PKG")"
 FRONTEND_HELM_VERSION="$(get_helm_app_version "$FRONTEND_CHART")"
-BACKEND_HELM_VERSION="$(get_helm_app_version "$BACKEND_CHART")"
 
 echo "Frontend package version: ${FRONTEND_PACKAGE_VERSION:-<missing>}"
 echo "Frontend helm appVersion: ${FRONTEND_HELM_VERSION:-<missing>}"
-echo "Backend package version: ${BACKEND_PACKAGE_VERSION:-<missing>}"
-echo "Backend helm appVersion: ${BACKEND_HELM_VERSION:-<missing>}"
 
 rc=0
 if [ -z "${FRONTEND_PACKAGE_VERSION:-}" ] || [ -z "${FRONTEND_HELM_VERSION:-}" ]; then
@@ -72,14 +66,6 @@ if [ -z "${FRONTEND_PACKAGE_VERSION:-}" ] || [ -z "${FRONTEND_HELM_VERSION:-}" ]
     rc=1
 elif [ "$FRONTEND_PACKAGE_VERSION" != "$FRONTEND_HELM_VERSION" ]; then
     echo "Mismatch: frontend package.json ($FRONTEND_PACKAGE_VERSION) != frontend Chart.yaml appVersion ($FRONTEND_HELM_VERSION)" >&2
-    rc=1
-fi
-
-if [ -z "${BACKEND_PACKAGE_VERSION:-}" ] || [ -z "${BACKEND_HELM_VERSION:-}" ]; then
-    echo "Error: Could not determine backend versions" >&2
-    rc=1
-elif [ "$BACKEND_PACKAGE_VERSION" != "$BACKEND_HELM_VERSION" ]; then
-    echo "Mismatch: backend package.json ($BACKEND_PACKAGE_VERSION) != backend Chart.yaml appVersion ($BACKEND_HELM_VERSION)" >&2
     rc=1
 fi
 

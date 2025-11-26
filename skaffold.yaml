@@ -12,10 +12,6 @@ build:
       context: pg-graphql-postgres
       docker:
         dockerfile: Dockerfile
-    - image: hegepi/backend
-      context: backend
-      docker:
-        dockerfile: Dockerfile
     - image: hegepi/frontend
       context: frontend
       docker:
@@ -38,10 +34,6 @@ profiles:
             chartPath: k8s/helm/charts/postgres-stack
             valuesFiles:
               - k8s/helm/values/postgres-stack/values.dev.yaml
-          - name: backend
-            chartPath: k8s/helm/charts/backend
-            valuesFiles:
-              - "k8s/helm/values/backend/values.dev.yaml"
           - name: frontend
             chartPath: k8s/helm/charts/frontend
             valuesFiles:
@@ -79,10 +71,6 @@ profiles:
             chartPath: k8s/helm/charts/postgres-stack
             valuesFiles:
               - k8s/helm/values/postgres-stack/values.prod.yaml
-          - name: backend
-            chartPath: k8s/helm/charts/backend
-            valuesFiles:
-              - "k8s/helm/values/backend/values.prod.yaml"
           - name: frontend
             chartPath: k8s/helm/charts/frontend
             valuesFiles:

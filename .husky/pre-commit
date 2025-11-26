@@ -20,8 +20,8 @@ fi
 # Ensure app versions in packages and Helm charts match
 ./scripts/check-app-version.sh
 
-# Format and lint frontend, backend and system-tests, then add changes
-for dir in frontend backend system-tests; do
+# Format and lint frontend and system-tests, then add changes
+for dir in frontend system-tests db-migrations; do
   if [ -d "$dir" ]; then
     echo "Running format and lint in $dir using $RUNNER"
     (

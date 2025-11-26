@@ -5,10 +5,6 @@
             "path": "."
         },
         {
-            "name": "backend",
-            "path": "backend"
-        },
-        {
             "name": "db-migrations",
             "path": "db-migrations"
         },
@@ -99,15 +95,6 @@
                 "problemMatcher": [],
                 "dependsOrder": "sequence",
                 "dependsOn": [
-                    {
-                        "label": "Update Dependencies in Backend",
-                        "type": "shell",
-                        "command": "npm update",
-                        "options": {
-                            "cwd": "${workspaceFolder:backend}"
-                        },
-                        "problemMatcher": []
-                    },
                     {
                         "label": "Update Dependencies in System Tests",
                         "type": "shell",
