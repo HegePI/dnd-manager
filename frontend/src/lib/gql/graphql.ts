@@ -580,7 +580,13 @@ export type GetCharactersQuery = {
 		pageInfo: { __typename: 'PageInfo'; hasNextPage: boolean };
 		edges: Array<{
 			__typename: 'CharactersEdge';
-			node: { __typename: 'Characters'; userId: string; name: string; createdAt: string };
+			node: {
+				__typename: 'Characters';
+				id: string;
+				userId: string;
+				name: string;
+				createdAt: string;
+			};
 		}>;
 	} | null;
 };
@@ -642,6 +648,10 @@ export const GetCharactersDocument = {
 																kind: 'Name',
 																value: '__typename'
 															}
+														},
+														{
+															kind: 'Field',
+															name: { kind: 'Name', value: 'id' }
 														},
 														{
 															kind: 'Field',

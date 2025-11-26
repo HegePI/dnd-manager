@@ -10,6 +10,7 @@
 				}
 				edges {
 					node {
+						id
 						userId
 						name
 						createdAt
@@ -31,7 +32,7 @@
 	<p>Oh no... {$characters.error.message}</p>
 {:else if $characters.data}
 	<ul>
-		{#each $characters.data.charactersCollection?.edges as edge (edge?.node.userId)}
+		{#each $characters.data.charactersCollection?.edges as edge (edge?.node.id)}
 			<li>{edge.node.name}</li>
 		{/each}
 	</ul>
