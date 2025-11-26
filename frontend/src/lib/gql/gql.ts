@@ -14,10 +14,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-	'\t\n        query getCharacters{\n            charactersCollection {\n                pageInfo {\n                    hasNextPage\n                }\n                edges {\n                    node {\n                        id\n                        userId\n                        name\n                        createdAt\n                    }\n                }\n            }\n        }\n\t': typeof types.GetCharactersDocument;
+	'\n\t\tquery getCharacters {\n\t\t\tcharactersCollection {\n\t\t\t\tpageInfo {\n\t\t\t\t\thasNextPage\n\t\t\t\t}\n\t\t\t\tedges {\n\t\t\t\t\tnode {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tuserId\n\t\t\t\t\t\tname\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t': typeof types.GetCharactersDocument;
 };
 const documents: Documents = {
-	'\t\n        query getCharacters{\n            charactersCollection {\n                pageInfo {\n                    hasNextPage\n                }\n                edges {\n                    node {\n                        id\n                        userId\n                        name\n                        createdAt\n                    }\n                }\n            }\n        }\n\t':
+	'\n\t\tquery getCharacters {\n\t\t\tcharactersCollection {\n\t\t\t\tpageInfo {\n\t\t\t\t\thasNextPage\n\t\t\t\t}\n\t\t\t\tedges {\n\t\t\t\t\tnode {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tuserId\n\t\t\t\t\t\tname\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t':
 		types.GetCharactersDocument
 };
 
@@ -39,8 +39,8 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-	source: '\t\n        query getCharacters{\n            charactersCollection {\n                pageInfo {\n                    hasNextPage\n                }\n                edges {\n                    node {\n                        id\n                        userId\n                        name\n                        createdAt\n                    }\n                }\n            }\n        }\n\t'
-): (typeof documents)['\t\n        query getCharacters{\n            charactersCollection {\n                pageInfo {\n                    hasNextPage\n                }\n                edges {\n                    node {\n                        id\n                        userId\n                        name\n                        createdAt\n                    }\n                }\n            }\n        }\n\t'];
+	source: '\n\t\tquery getCharacters {\n\t\t\tcharactersCollection {\n\t\t\t\tpageInfo {\n\t\t\t\t\thasNextPage\n\t\t\t\t}\n\t\t\t\tedges {\n\t\t\t\t\tnode {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tuserId\n\t\t\t\t\t\tname\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t'
+): (typeof documents)['\n\t\tquery getCharacters {\n\t\t\tcharactersCollection {\n\t\t\t\tpageInfo {\n\t\t\t\t\thasNextPage\n\t\t\t\t}\n\t\t\t\tedges {\n\t\t\t\t\tnode {\n\t\t\t\t\t\tid\n\t\t\t\t\t\tuserId\n\t\t\t\t\t\tname\n\t\t\t\t\t\tcreatedAt\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t'];
 
 export function graphql(source: string) {
 	return (documents as any)[source] ?? {};
