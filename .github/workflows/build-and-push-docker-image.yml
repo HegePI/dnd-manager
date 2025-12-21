@@ -32,6 +32,11 @@ jobs:
                   SERVICE="${TAG%%/*}"
                   VERSION="${TAG##*/}"
 
+                  if [[ "$SERVICE" == "$VERSION" || -z "$SERVICE" || -z "$VERSION" ]]; then
+                      echo "::error::Invalid tag format. Expected 'service/version', got '$TAG'"
+                      exit 1
+                  fi
+
                   echo "service=$SERVICE" >> $GITHUB_OUTPUT
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
 

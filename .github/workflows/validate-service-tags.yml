@@ -78,10 +78,14 @@ jobs:
                         exit 1
                       fi
 
-                      LAST_TAG=$(git tag -l "${SERVICE}/v*" --sort=-v:refname | head -n1)
+                      LAST_TAG=$(git tag --merged origin/master -l "${SERVICE}/v*" --sort=-v:refname | head -n1)
 
                       if [ -n "$LAST_TAG" ]; then
                         LAST_VERSION="${LAST_TAG#*/v}"
+                        if [ "$VERSION" = "$LAST_VERSION" ]; then
+                          echo "❌ Version $VERSION must be greater than $LAST_VERSION"
+                          exit 1
+                        fi                        
                         if ! printf '%s\n%s\n' "$LAST_VERSION" "$VERSION" | sort -V | tail -n1 | grep -q "$VERSION"; then
                           echo "❌ Version $VERSION must be greater than $LAST_VERSION"
                           exit 1
