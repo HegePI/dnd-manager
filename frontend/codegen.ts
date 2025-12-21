@@ -2,7 +2,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 import { addTypenameSelectionDocumentTransform } from '@graphql-codegen/client-preset';
 
 const config: CodegenConfig = {
-	schema: 'http://localhost:3000/rpc/graphql', // Using the local endpoint, update if needed
+	schema: process.env.PUBLIC_GRAPHQL_URL || 'http://localhost:3000/rpc/graphql', // Using the local endpoint, update if needed
 	documents: 'src/**/*.svelte',
 	overwrite: true,
 	ignoreNoDocuments: true,

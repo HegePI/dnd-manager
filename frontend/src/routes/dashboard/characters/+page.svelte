@@ -1,39 +1,16 @@
 <script lang="ts">
-	import { graphql } from '$lib/gql';
-	import { getContextClient, queryStore } from '@urql/svelte';
+	import type { PageData } from './$types';
 
-	const getCharactersQuery = graphql(`
-		query getCharacters {
-			charactersCollection {
-				pageInfo {
-					hasNextPage
-				}
-				edges {
-					node {
-						id
-						userId
-						name
-						createdAt
-					}
-				}
-			}
-		}
-	`);
-
-	const characters = queryStore({
-		client: getContextClient(),
-		query: getCharactersQuery
-	});
+	let { data }: { data: PageData } = $props();
 </script>
 
-{#if $characters.fetching}
-	<p>Loading...</p>
-{:else if $characters.error}
-	<p>Oh no... {$characters.error.message}</p>
-{:else if $characters.data}
+{#if data.error}
+	<p>Error loading characters: {data.error.message}</p>
+{:else if data.data}
+	<p>Characters loaded successfully.</p>
 	<ul>
-		{#each $characters.data.charactersCollection?.edges as edge (edge?.node.id)}
-			<li>{edge.node.name}</li>
+		{#each data.data.charactersCollection?.edges ?? [] as edge (edge?.node?.id)}
+			<li>{edge?.node?.name}</li>
 		{/each}
 	</ul>
 {/if}

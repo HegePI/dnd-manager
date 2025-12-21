@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+graphql_url: http://postgres-stack-postgrest:3000/rpc/graphql
+
 image:
   repository: hegepi/dnd-manager-graphiql
   pullPolicy: IfNotPresent
