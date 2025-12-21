@@ -112,7 +112,8 @@
 
 			{#each section.fields as field, fieldIndex (field.name)}
 				<div class="field">
-					<label for={'field-' + sectionIndex + '-' + fieldIndex}>{field.name} ({field.type})</label
+					<label for={'field-' + sectionIndex + '-' + fieldIndex}
+						>{field.name} ({field.type})</label
 					>
 					{#if field.type === 'text'}
 						<input

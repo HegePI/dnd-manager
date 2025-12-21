@@ -5,33 +5,44 @@
             "path": "."
         },
         {
-            "path": "backend"
+            "name": "db-migrations",
+            "path": "db-migrations"
         },
         {
-            "path": "system-tests"
-        },
-        {
+            "name": "frontend",
             "path": "frontend"
         },
         {
+            "name":"graphiql",
+            "path":"graphiql"
+        },
+        {
+            "name": "k8s",
             "path": "k8s"
-        }
+        },
+        {
+            "name": "pg-graphql-postgres",
+            "path": "pg-graphql-postgres"
+        },
+        {
+            "name": "scripts",
+            "path": "scripts"
+        },
+        {
+            "name": "system-tests",
+            "path": "system-tests"
+        },
     ],
     "extensions": {
         "recommendations": [
             "aaron-bond.better-comments",
-            "ms-azuretools.vscode-docker",
             "editorconfig.editorconfig",
             "usernamehw.errorlens",
             "github.vscode-pull-request-github",
-            "googlecloudtools.cloudcode",
-            "wix.vscode-import-cost",
-            "ms-kubernetes-tools.vscode-kubernetes-tools",
-            "sakamoto66.vscode-playwright-test-runner",
-            "mquandalle.graphql",
-            "svelte.svelte-vscode",
             "GitHub.copilot",
-            "github.vscode-github-actions"
+            "github.vscode-github-actions",
+            "google.geminicodeassist",
+            "eamodio.gitlens"
         ]
     },
     "tasks": {
@@ -84,15 +95,6 @@
                 "problemMatcher": [],
                 "dependsOrder": "sequence",
                 "dependsOn": [
-                    {
-                        "label": "Update Dependencies in Backend",
-                        "type": "shell",
-                        "command": "npm update",
-                        "options": {
-                            "cwd": "${workspaceFolder:backend}"
-                        },
-                        "problemMatcher": []
-                    },
                     {
                         "label": "Update Dependencies in System Tests",
                         "type": "shell",

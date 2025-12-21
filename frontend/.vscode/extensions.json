@@ -1,0 +1,13 @@
+{
+	"recommendations": [
+		"oven.bun-vscode",
+		"ms-azuretools.vscode-containers",
+		"ms-azuretools.vscode-docker",
+		"dbaeumer.vscode-eslint",
+		"wix.vscode-import-cost",
+		"esbenp.prettier-vscode",
+		"stylelint.vscode-stylelint",
+		"svelte.svelte-vscode",
+		"graphql.vscode-graphql"
+	]
+}

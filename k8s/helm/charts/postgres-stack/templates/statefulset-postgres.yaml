@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgres
+  labels:
+    app.kubernetes.io/name: {{ include "postgres-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  serviceName: {{ include "postgres-stack.fullname" . }}-postgres-headless
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "postgres-stack.fullname" . }}-postgres
+  template:
+    metadata:
+      labels:
+        app: {{ include "postgres-stack.fullname" . }}-postgres
+    spec:
+      securityContext:
+        {{- with .Values.postgres.securityContext }}
+        {{- if .runAsUser }}
+        runAsUser: {{ .runAsUser }}
+        {{- end }}
+        {{- if .runAsGroup }}
+        runAsGroup: {{ .runAsGroup }}
+        {{- end }}
+        {{- if .fsGroup }}
+        fsGroup: {{ .fsGroup }}
+        {{- end }}
+        {{- end }}
+
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.postgres.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgres-secrets
+                  key: postgres-database
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          args:
+            - "--config-file=/etc/postgresql/postgresql.conf"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+            - name: postgres-config
+              mountPath: /etc/postgresql/postgresql.conf
+              subPath: postgresql.conf
+            - name: pg-hba-conf
+              mountPath: /etc/postgresql/pg_hba.conf
+              subPath: pg_hba.conf
+
+      volumes:
+        - name: init-sql
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-init-sql
+            items:
+              - key: 01-init.sql
+                path: 01-init.sql
+        - name: pg-hba-conf
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-init-sql
+            items:
+              - key: 02-pg_hba.conf
+                path: pg_hba.conf
+        - name: postgres-config
+          configMap:
+            name: {{ include "postgres-stack.fullname" . }}-init-sql
+            items:
+              - key: 03-postgresql.conf
+                path: postgresql.conf
+        - name: run
+          emptyDir: {}
+        {{- if not .Values.postgres.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+
+  {{- if .Values.postgres.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app: {{ include "postgres-stack.fullname" . }}-postgres
+      spec:
+        accessModes:
+        {{- range .Values.postgres.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        {{- if .Values.postgres.persistence.storageClass }}
+        storageClassName: {{ .Values.postgres.persistence.storageClass }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgres.persistence.size }}
+  {{- end }}

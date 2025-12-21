@@ -1,0 +1,102 @@
+name: PR – Validate Service Tags
+
+on:
+    pull_request:
+        branches: [master]
+
+jobs:
+    validate-tags:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Detect changed services
+              id: changes
+              uses: dorny/paths-filter@v3
+              with:
+                  filters: |
+                      frontend:
+                        - 'frontend/**'
+                      db-migrations:
+                        - 'db-migrations/**'
+                      pg-graphql-postgres:
+                        - 'pg-graphql-postgres/**'
+                      graphiql:
+                        - 'graphiql/**'
+
+            - name: Fetch all tags
+              run: git fetch --tags
+
+            - name: Validate service tags
+              run: |
+                  set -e
+
+                  SERVICES="frontend db-migrations pg-graphql-postgres graphiql"
+
+                  # Tags reachable from this branch but not from master
+                  PR_TAGS=$(git tag --merged HEAD | grep '/' || true)
+                  MASTER_TAGS=$(git tag --merged origin/master | grep '/' || true)
+
+                  NEW_TAGS=$(comm -23 \
+                    <(echo "$PR_TAGS" | sort) \
+                    <(echo "$MASTER_TAGS" | sort)
+                  )
+
+                  echo "New tags in this PR:"
+                  echo "$NEW_TAGS"
+
+                  # Convert paths-filter output to JSON safely
+                  CHANGES_JSON='${{ toJson(steps.changes.outputs) }}'
+
+                  for SERVICE in $SERVICES; do
+                    # Safe access for keys with dashes; default to false
+                    CHANGED=$(jq -r ".\"$SERVICE\" // false" <<< "$CHANGES_JSON")
+
+                    SERVICE_TAGS=$(echo "$NEW_TAGS" | grep "^${SERVICE}/v" || true)
+
+                    if [ "$CHANGED" = "true" ]; then
+                      if [ -z "$SERVICE_TAGS" ]; then
+                        echo "❌ $SERVICE changed but no tag found"
+                        exit 1
+                      fi
+
+                      COUNT=$(echo "$SERVICE_TAGS" | wc -l)
+                      if [ "$COUNT" -ne 1 ]; then
+                        echo "❌ $SERVICE must have exactly one tag"
+                        exit 1
+                      fi
+
+                      TAG="$SERVICE_TAGS"
+                      VERSION="${TAG#*/v}"
+
+                      if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                        echo "❌ Invalid semver for $SERVICE: $VERSION"
+                        exit 1
+                      fi
+
+                      LAST_TAG=$(git tag --merged origin/master -l "${SERVICE}/v*" --sort=-v:refname | head -n1)
+
+                      if [ -n "$LAST_TAG" ]; then
+                        LAST_VERSION="${LAST_TAG#*/v}"
+                        if [ "$VERSION" = "$LAST_VERSION" ]; then
+                          echo "❌ Version $VERSION must be greater than $LAST_VERSION"
+                          exit 1
+                        fi                        
+                        if ! printf '%s\n%s\n' "$LAST_VERSION" "$VERSION" | sort -V | tail -n1 | grep -q "$VERSION"; then
+                          echo "❌ Version $VERSION must be greater than $LAST_VERSION"
+                          exit 1
+                        fi
+                      fi
+
+                      echo "✅ $SERVICE validated with version $VERSION"
+                    else
+                      if [ -n "$SERVICE_TAGS" ]; then
+                        echo "❌ $SERVICE tagged but no changes detected"
+                        exit 1
+                      fi
+                    fi
+                  done

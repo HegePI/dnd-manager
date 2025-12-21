@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgrest
+  labels:
+    app: {{ include "postgres-stack.fullname" . }}-postgrest
+spec:
+  type: {{ .Values.service.postgrest.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.service.postgrest.port }}
+      targetPort: {{ .Values.service.postgrest.port }}
+      protocol: TCP
+      name: postgrest
+  selector:
+    app: {{ include "postgres-stack.fullname" . }}-postgrest

@@ -1,0 +1,36 @@
+postgres:
+  image:
+    repository: hegepi/pg-graphql-postgres
+    tag: latest
+    pullPolicy: IfNotPresent
+  postgresUser: changeme-default-user-dnd
+  postgresPassword: changeme-default-password-dnd
+  postgresDatabase: changeme-default-db-dnd
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessModes:
+      - ReadWriteOnce
+  securityContext:
+    runAsUser: 1001
+    runAsGroup: 1001
+    fsGroup: 1001
+
+postgrest:
+  enabled: true
+  image:
+    repository: postgrest/postgrest
+    tag: latest
+    pullPolicy: IfNotPresent
+  dbAnonRole: anon
+  dbSchemas: public,graphql
+
+service:
+  postgrest:
+    port: 3000
+
+ingress:
+  enabled: true
+  host: postgrest.local
+
+replicaCount: 1

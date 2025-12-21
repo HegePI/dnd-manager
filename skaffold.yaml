@@ -8,30 +8,74 @@ build:
     tryImportMissing: false
     useDockerCLI: false
   artifacts:
-    - image: backend
-      context: backend
+    - image: hegepi/pg-graphql-postgres
+      context: pg-graphql-postgres
       docker:
         dockerfile: Dockerfile
-    - image: frontend
+    - image: hegepi/frontend
       context: frontend
       docker:
         dockerfile: Dockerfile
-deploy:
-  helm:
-    releases:
-      - name: postgresql
-        remoteChart: bitnami/postgresql
-        valuesFiles:
-          - k8s/helm/values/postgresql/postgresql.dev.yaml
-      - name: backend
-        chartPath: k8s/helm/charts/backend
-        valuesFiles:
-          - "k8s/helm/values/backend/values.dev.yaml"
-      - name: frontend
-        chartPath: k8s/helm/charts/frontend
-        valuesFiles:
-          - "k8s/helm/values/frontend/values.dev.yaml"
-      - name: postgrest
-        chartPath: k8s/helm/charts/postgrest
-        valuesFiles:
-          - "k8s/helm/values/postgrest/values.dev.yaml"
+    - image: hegepi/db-migrations
+      context: db-migrations
+      docker:
+        dockerfile: Dockerfile
+    - image: hegepi/dnd-manager-graphiql
+      context: graphiql
+      docker: 
+        dockerfile: Dockerfile
+
+profiles:
+  - name: dev
+    deploy:
+      helm:
+        releases:
+          - name: postgres-stack
+            chartPath: k8s/helm/charts/postgres-stack
+            valuesFiles:
+              - k8s/helm/values/postgres-stack/values.dev.yaml
+          - name: frontend
+            chartPath: k8s/helm/charts/frontend
+            valuesFiles:
+              - "k8s/helm/values/frontend/values.dev.yaml"
+          - name: db-migrations
+            chartPath: k8s/helm/charts/db-migrations
+            valuesFiles:
+              - "k8s/helm/values/db-migrations/values.dev.yaml"
+          - name: graphiql
+            chartPath: k8s/helm/charts/graphiql
+            valuesFiles:
+              - "k8s/helm/values/graphiql/values.dev.yaml"
+    portForward:
+      - resourceType: service
+        resourceName: postgres-stack-postgrest
+        namespace: default
+        port: 3000
+        localPort: 3000
+      - resourceType: service
+        resourceName: graphiql
+        namespace: default
+        port: 80
+        localPort: 3002
+      - resourceType: service
+        resourceName: frontend
+        namespace: default
+        port: 3100
+        localPort: 3100
+
+  - name: prod
+    deploy:
+      helm:
+        releases:
+          - name: postgres-stack
+            chartPath: k8s/helm/charts/postgres-stack
+            valuesFiles:
+              - k8s/helm/values/postgres-stack/values.prod.yaml
+          - name: frontend
+            chartPath: k8s/helm/charts/frontend
+            valuesFiles:
+              - "k8s/helm/values/frontend/values.prod.yaml"
+          - name: db-migrations
+            chartPath: k8s/helm/charts/db-migrations
+            valuesFiles:
+              - "k8s/helm/values/db-migrations/values.prod.yaml"

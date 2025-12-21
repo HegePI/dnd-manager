@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-init-sql
+data:
+  01-init.sql: |
+    -- Create extensions
+    CREATE EXTENSION IF NOT EXISTS pg_graphql;
+
+    -- Create anon role
+    CREATE ROLE anon;
+
+    GRANT USAGE ON SCHEMA public TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon; 
+
+    GRANT usage on schema graphql to anon;
+    grant all on function graphql.resolve to anon;
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON TABLES TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON FUNCTIONS TO anon;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA graphql GRANT ALL ON SEQUENCES TO anon;
+
+
+    -- GraphQL Entrypoint
+    CREATE OR REPLACE FUNCTION graphql(
+        "operationName" text default null,
+        query text default null,
+        variables jsonb default null,
+        extensions jsonb default null
+    )
+        returns jsonb
+        language sql
+    AS $$
+        SELECT graphql.resolve(
+            query := query,
+            variables := coalesce(variables, '{}'),
+            "operationName" := "operationName",
+            extensions := extensions
+        );
+    $$;
+
+    COMMENT ON SCHEMA PUBLIC IS '@graphql({"inflect_names": true})';
+
+  02-pg_hba.conf: |
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    # "local" is for Unix domain socket connections only
+    local   all             all                                     trust
+    # IPv4 local connections:
+    host    all             all             127.0.0.1/32           trust
+    # IPv6 local connections:
+    host    all             all             ::1/128                 trust
+    # Allow replication connections from localhost
+    host replication all    127.0.0.1/32    trust
+    host replication all    ::1/128         trust
+    # Allow from within k8s
+    host    all             all             10.0.0.0/8              md5
+
+  03-postgresql.conf: |
+    # Custom PostgreSQL Configuration
+    listen_addresses = '*'
+    port = 5432
+    max_connections = 100
+    shared_buffers = 128MB
+    dynamic_shared_memory_type = posix
+    log_timezone = 'Etc/UTC'
+    datestyle = 'iso, mdy'
+    timezone = 'Etc/UTC'
+    lc_messages = 'en_US.utf8'
+    lc_monetary = 'en_US.utf8'
+    lc_numeric = 'en_US.utf8'
+    lc_time = 'en_US.utf8'
+    default_text_search_config = 'pg_catalog.english'
+    

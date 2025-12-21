@@ -1,0 +1,14 @@
+migration:
+  enabled: true
+
+image:
+  repository: hegepi/db-migrations
+  tag: latest
+  pullPolicy: IfNotPresent
+
+postgres:
+  host: postgres-stack-postgres
+  port: "5432"
+  user: changeme-default-user-dnd
+  password: changeme-default-password-dnd
+  database: changeme-default-db-dnd

@@ -1,4 +1,34 @@
+#!/bin/sh
+set -e
+
+# Determine which package runner to use. Prefer bun, then pnpm, then npm.
+if command -v bun >/dev/null 2>&1; then
+  RUNNER="bun"
+elif [ -x "$HOME/.bun/bin/bun" ]; then
+  # common install location for bun; add to PATH for this hook
+  export PATH="$HOME/.bun/bin:$PATH"
+  RUNNER="bun"
+elif command -v pnpm >/dev/null 2>&1; then
+  RUNNER="pnpm"
+elif command -v npm >/dev/null 2>&1; then
+  RUNNER="npm"
+else
+  echo "Error: no package runner found (bun, pnpm or npm). Install bun or make one available in PATH." >&2
+  exit 1
+fi
+
+# Ensure app versions in packages and Helm charts match
 ./scripts/check-app-version.sh
-cd frontend/ && bun run format && bun run lint && cd .. && git add frontend/
-cd backend/ && bun run format && bun run lint && cd .. && git add backend/
-cd system-tests/ && bun run format && bun run lint && cd .. && git add system-tests/
+
+# Format and lint frontend and system-tests, then add changes
+for dir in frontend system-tests db-migrations; do
+  if [ -d "$dir" ]; then
+    echo "Running format and lint in $dir using $RUNNER"
+    (
+      cd "$dir" && \
+      "$RUNNER" run format && \
+      "$RUNNER" run lint
+    )
+    git add "$dir/"
+  fi
+done

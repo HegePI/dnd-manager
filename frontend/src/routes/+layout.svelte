@@ -1,6 +1,6 @@
-<script>
-	import Header from '../stories/Header.svelte';
+<script lang="ts">
 	import Footer from '../stories/Footer.svelte';
+	import Header from '../stories/Header.svelte';
 	/**
 	 * @typedef {Object} Props
 	 * @property {import('svelte').Snippet} [children]

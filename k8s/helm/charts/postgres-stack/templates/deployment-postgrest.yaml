@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "postgres-stack.fullname" . }}-postgrest
+  labels:
+    app.kubernetes.io/name: {{ include "postgres-stack.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.postgrest.replicaCount | default .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "postgres-stack.fullname" . }}-postgrest
+  template:
+    metadata:
+      labels:
+        app: {{ include "postgres-stack.fullname" . }}-postgrest
+    spec:
+      containers:
+        - name: postgrest
+          image: "{{ .Values.postgrest.image.repository }}:{{ .Values.postgrest.image.tag }}"
+          imagePullPolicy: {{ .Values.postgrest.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.postgrest.port }}
+              name: postgrest
+          env:
+            - name: PGRST_DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgrest-secrets
+                  key: db-uri
+            - name: PGRST_DB_SCHEMAS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgrest-secrets
+                  key: db-schemas
+            - name: PGRST_DB_ANON_ROLE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgres-stack.fullname" . }}-postgrest-secrets
+                  key: db-anon-role
