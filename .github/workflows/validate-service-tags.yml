@@ -1,4 +1,4 @@
-name: PR - Validate Service Tags
+name: PR – Validate Service Tags
 
 on:
     pull_request:
@@ -37,6 +37,7 @@ jobs:
 
                   SERVICES="frontend db-migrations pg-graphql-postgres graphiql"
 
+                  # Tags reachable from this branch but not from master
                   PR_TAGS=$(git tag --merged HEAD | grep '/' || true)
                   MASTER_TAGS=$(git tag --merged origin/master | grep '/' || true)
 
@@ -48,8 +49,13 @@ jobs:
                   echo "New tags in this PR:"
                   echo "$NEW_TAGS"
 
+                  # Convert paths-filter output to JSON safely
+                  CHANGES_JSON='${{ toJson(steps.changes.outputs) }}'
+
                   for SERVICE in $SERVICES; do
-                    CHANGED=$(jq -r ".${SERVICE}" <<< '${{ toJson(steps.changes.outputs) }}')
+                    # Safe access for keys with dashes; default to false
+                    CHANGED=$(jq -r ".\"$SERVICE\" // false" <<< "$CHANGES_JSON")
+
                     SERVICE_TAGS=$(echo "$NEW_TAGS" | grep "^${SERVICE}/v" || true)
 
                     if [ "$CHANGED" = "true" ]; then
